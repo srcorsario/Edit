@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ADMIN PRO - Gestión de Carta</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primario: #e67e22; --fondo: #f4f7f6; --texto: #2c3e50; --verde: #27ae60; --gris: #7f8c8d; }
+        
+        body { font-family: 'Montserrat', sans-serif; background: var(--fondo); margin: 0; padding: 20px 10px 140px; color: var(--texto); }
+        .container { max-width: 600px; margin: 0 auto; }
+        
+        /* Cabecera */
+        .header-admin { text-align: center; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 25px; border-bottom: 4px solid var(--primario); }
+        .header-admin h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Categorías */
+        .categoria-tarjeta { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .categoria-titulo { background: var(--primario); color: white; padding: 12px 18px; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+        
+        /* Platos */
+        .plato-item { display: flex; align-items: center; padding: 12px 18px; border-bottom: 1px solid #f1f2f6; gap: 12px; }
+        .plato-info { flex: 1; min-width: 0; }
+        .plato-nombre { font-weight: 600; font-size: 0.95rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .plato-precio { color: var(--gris); font-size: 0.85rem; }
+
+        .btn-config { background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px; padding: 10px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+        
+        .switch { position: relative; width: 44px; height: 22px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background: var(--verde); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* Modal Adaptado a Móvil */
+        #modal-editor { 
+            display: none; 
+            position: fixed; 
+            z-index: 2000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .modal-content { 
+            background: white; 
+            width: 92%; 
+            max-width: 450px; 
+            margin: 20px auto; 
+            border-radius: 20px; 
+            padding: 20px; 
+            max-height: 85vh; 
+            overflow-y: auto; 
+            position: relative; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            -webkit-overflow-scrolling: touch; 
+        }
+        .close-modal { position: absolute; right: 15px; top: 15px; font-size: 2rem; cursor: pointer; color: var(--gris); line-height: 1; z-index: 10; }
+
+        .form-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        label { display: block; font-weight: 700; font-size: 0.7rem; margin-bottom: 4px; color: var(--primario); text-transform: uppercase; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 1rem; background: #fdfdfd; }
+        
+        /* Precio con bloqueo visual */
+        .precio-wrapper { text-align: center; background: #fff4eb; padding: 15px; border-radius: 12px; border: 1px solid #ffe0cc; width: 60%; margin: 5px auto; }
+        .precio-wrapper input { text-align: center; font-weight: 700; color: var(--primario); font-size: 1.4rem; border: 1px solid transparent; background: white; }
+
+        /* Alérgenos con nombres corregidos */
+        .alergenos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 10px; margin-top: 10px; padding-bottom: 20px; }
+        .alergeno-btn { border: 2px solid #eee; border-radius: 10px; padding: 10px 2px; text-align: center; cursor: pointer; filter: grayscale(1); opacity: 0.4; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70px; }
+        .alergeno-btn.active { opacity: 1; filter: grayscale(0); border-color: var(--primario); background: #fff3e0; }
+        .alergeno-btn span { display: block; font-size: 0.55rem; font-weight: 700; margin-top: 5px; line-height: 0.75rem; word-break: break-word; }
+        .alergeno-btn img { width: 25px; height: 25px; object-fit: contain; }
+
+        /* Botones de acción */
+        .btn-guardar-main { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: var(--texto); color: white; padding: 18px 45px; border-radius: 50px; border: none; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.3); z-index: 1000; width: auto; min-width: 280px; transition: 0.3s; }
+        .btn-guardar-main:active { transform: translateX(-50%) scale(0.95); }
+        
+        .btn-update-plato { width: 100%; background: var(--verde); color: white; border: none; padding: 18px; border-radius: 12px; font-weight: 700; margin: 20px 0 10px 0; cursor: pointer; font-size: 1rem; }
+
+        .modal-footer-spacer { height: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-admin"><h1>⚙️ Gestor de Datos de Carta</h1></div>
+    <div id="editor-dinamico">Cargando platos...</div>
+</div>
+
+<button class="btn-guardar-main" onclick="enviarAlExcel()">💾 APLICAR TODO AL EXCEL</button>
+
+<div id="modal-editor">
+    <div class="modal-content">
+        <span class="close-modal" onclick="cerrarModal()">×</span>
+        <h3 id="modal-titulo" style="margin: 0 0 20px 0; font-size: 1.1rem; color: var(--primario);">Editar Plato</h3>
+        
+        <div class="form-list">
+            <div class="form-group"><label>Español</label><input type="text" id="edit-es"></div>
+            <div class="form-group"><label>Inglés</label><input type="text" id="edit-en"></div>
+            <div class="form-group"><label>Alemán</label><input type="text" id="edit-de"></div>
+            <div class="form-group"><label>Francés</label><input type="text" id="edit-fr"></div>
+            <div class="form-group"><label>Italiano</label><input type="text" id="edit-it"></div>
+            
+            <div class="precio-wrapper">
+                <label>Precio (€)</label>
+                <input type="text" id="edit-precio" inputmode="decimal" oninput="validarPunto(this)" onblur="formatearPrecio(this)">
+            </div>
+        </div>
+
+        <label>Alérgenos</label>
+        <div class="alergenos-grid" id="grid-alergenos"></div>
+
+        <button class="btn-update-plato" onclick="aplicarCambiosPlato()">GUARDAR CAMBIOS LOCALES</button>
+        <div class="modal-footer-spacer"></div>
+    </div>
+</div>
+
+<script>
+    // URLS CONFIGURADAS
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSMhPbZuQWubawpjneIaAwSkxqFw-3LcmVw5xBuU_kxjMHpT1Sa8N7aZq9yxU4DZBawr4qNQmWlMnOy/pub?output=csv';
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxl4OIAoZ-cd73o-ZqStdVTLd6bs_QozaI4c1fYt7WpamlBtMxpwsW7PcTuGG0loEHo/exec';
+
+    const LISTA_ALERGENOS = ["GLUTEN", "SESAMO", "CACAHUETE", "SOJA", "FRUTOSCASCARA", "APIO", "HUEVO", "PESCADO", "MOSTAZA", "MOLUSCO", "SULFITOS", "LACTOSA", "CRUSTACEO", "ALTRAMUCES"];
+    
+    let datosLocales = [];
+    let platoEditandoId = null;
+
+    const ESTRUCTURA_RANGOS = [
+        { min: 12000, max: 12999, titulo: "🌟 Sugerencias del Chef" },
+        { min: 1000,  max: 1999,  titulo: "🥘 Entrantes" },
+        { min: 2000,  max: 2999,  titulo: "🥗 Ensaladas" },
+        { min: 3000,  max: 3999,  titulo: "🍝 Arroces y Pasta" },
+        { min: 4000,  max: 4999,  titulo: "👨‍🍳 Nuestras Recetas" },
+        { min: 5000,  max: 5999,  titulo: "🥩 Platos Principales" },
+        { min: 6000,  max: 6999,  titulo: "🍟 Guarniciones" },
+        { min: 7000,  max: 7999,  titulo: "👶 Menú Infantil" },
+        { min: 8000,  max: 8999,  titulo: "🍰 Postres" },
+        { min: 9000,  max: 9999,  titulo: "☕ Café y Té" },
+        { min: 10000, max: 10999, titulo: "🍷 Bebidas" },
+        { min: 11000, max: 11999, titulo: "🍺 Cervezas" }
+    ];
+
+    // Lógica de validación de precio (Bloqueo de coma y de más de 2 decimales)
+    function validarPunto(input) {
+        input.value = input.value.replace(',', '.');
+        input.value = input.value.replace(/[^0-9.]/g, '');
+        const partes = input.value.split('.');
+        if (partes.length > 2) input.value = partes[0] + '.' + partes[1];
+        if (partes.length === 2 && partes[1].length > 2) {
+            input.value = partes[0] + '.' + partes[1].substring(0, 2);
+        }
+    }
+
+    function formatearPrecio(input) {
+        let valor = input.value;
+        if(valor === "" || isNaN(valor) || valor === ".") {
+            input.value = "0.00";
+        } else {
+            input.value = parseFloat(valor).toFixed(2);
+        }
+    }
+
+    async function cargar() {
+        try {
+            const res = await fetch(CSV_URL);
+            const csv = await res.text();
+            const filas = csv.split(/\r?\n/).map(r => r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/));
+            const c = { id: 0, precio: 1, activa: 2, es: 3, aler: 6, en: 7, de: 8, fr: 9, it: 10 };
+            
+            datosLocales = [];
+            for (let i = 1; i < filas.length; i++) {
+                const f = filas[i];
+                if (!f[c.es]) continue;
+                const idVal = parseInt((f[c.id] || "").replace(/"/g, ''));
+                if (isNaN(idVal)) continue;
+
+                let precioCargado = (f[c.precio] || "0").replace(/"/g, '').replace(',', '.');
+
+                datosLocales.push({
+                    id: idVal,
+                    nombreOriginal: f[c.es].replace(/"/g, '').trim(),
+                    precio: parseFloat(precioCargado).toFixed(2),
+                    activa: f[c.activa]?.toLowerCase().includes("si"),
+                    es: f[c.es].replace(/"/g, '').trim(),
+                    en: f[c.en]?.replace(/"/g, '') || "",
+                    de: f[c.de]?.replace(/"/g, '') || "",
+                    fr: f[c.fr]?.replace(/"/g, '') || "",
+                    it: f[c.it]?.replace(/"/g, '') || "",
+                    alergenos: f[c.aler]?.replace(/"/g, '') || ""
+                });
+            }
+            renderizar();
+        } catch (e) { console.error(e); }
+    }
+
+    function renderizar() {
+        let html = "";
+        ESTRUCTURA_RANGOS.forEach(rango => {
+            const platos = datosLocales.filter(p => p.id >= rango.min && p.id <= rango.max);
+            if (platos.length === 0) return;
+            html += `<div class="categoria-tarjeta"><div class="categoria-titulo">${rango.titulo}</div>`;
+            platos.sort((a,b) => a.id - b.id).forEach(p => {
+                html += `
+                <div class="plato-item">
+                    <div class="plato-info">
+                        <span class="plato-nombre">${p.es}</span>
+                        <span class="plato-precio">${p.precio}€</span>
+                    </div>
+                    <button class="btn-config" onclick="abrirEditor(${p.id})">⚙️</button>
+                    <label class="switch">
+                        <input type="checkbox" ${p.activa ? 'checked' : ''} onchange="toggleActivo(${p.id}, this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>`;
+            });
+            html += `</div>`;
+        });
+        document.getElementById('editor-dinamico').innerHTML = html;
+    }
+
+    function abrirEditor(id) {
+        const p = datosLocales.find(x => x.id === id);
+        platoEditandoId = id;
+        document.getElementById('modal-titulo').innerText = "Editando: " + p.es;
+        document.getElementById('edit-precio').value = p.precio;
+        document.getElementById('edit-es').value = p.es;
+        document.getElementById('edit-en').value = p.en;
+        document.getElementById('edit-de').value = p.de;
+        document.getElementById('edit-fr').value = p.fr;
+        document.getElementById('edit-it').value = p.it;
+        const grid = document.getElementById('grid-alergenos');
+        grid.innerHTML = LISTA_ALERGENOS.map(a => {
+            const activo = p.alergenos.toUpperCase().includes(a);
+            let nombreVisual = (a === "FRUTOSCASCARA") ? "FRUTOS CASCARA" : a;
+            return `
+            <div class="alergeno-btn ${activo ? 'active' : ''}" onclick="this.classList.toggle('active')" data-aler="${a}">
+                <img src="https://img.icons8.com/color/48/000000/info--v1.png" alt="${a}">
+                <span>${nombreVisual}</span>
+            </div>`;
+        }).join('');
+        document.getElementById('modal-editor').style.display = 'block';
+        document.querySelector('.modal-content').scrollTop = 0;
+    }
+
+    function cerrarModal() { document.getElementById('modal-editor').style.display = 'none'; }
+
+    function aplicarCambiosPlato() {
+        const p = datosLocales.find(x => x.id === platoEditandoId);
+        const inputPrecio = document.getElementById('edit-precio');
+        formatearPrecio(inputPrecio);
+        
+        p.precio = inputPrecio.value;
+        p.es = document.getElementById('edit-es').value;
+        p.en = document.getElementById('edit-en').value;
+        p.de = document.getElementById('edit-de').value;
+        p.fr = document.getElementById('edit-fr').value;
+        p.it = document.getElementById('edit-it').value;
+        const seleccionados = Array.from(document.querySelectorAll('.alergeno-btn.active')).map(btn => btn.dataset.aler);
+        p.alergenos = seleccionados.join(', ');
+        cerrarModal();
+        renderizar();
+    }
+
+    function toggleActivo(id, valor) {
+        const p = datosLocales.find(x => x.id === id);
+        p.activa = valor;
+    }
+
+    async function enviarAlExcel() {
+        const btn = document.querySelector('.btn-guardar-main');
+        const originalText = btn.innerText;
+        btn.innerText = "⏳ SINCRONIZANDO...";
+        btn.disabled = true;
+        
+        const payload = datosLocales.map(p => ({
+            nombreOriginal: p.nombreOriginal,
+            estado: p.activa ? 'si' : 'no',
+            precio: p.precio,
+            alergenos: p.alergenos,
+            nombre_es: p.es,
+            nombre_en: p.en,
+            nombre_de: p.de,
+            nombre_fr: p.fr,
+            nombre_it: p.it
+        }));
+        
+        try {
+            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            alert("✅ ¡Excel actualizado correctamente!");
+        } catch (e) { 
+            alert("❌ Error de conexión: " + e.message); 
+        } finally { 
+            btn.innerText = originalText; 
+            btn.disabled = false; 
+        }
+    }
+    cargar();
+</script>
+</body>
+</html>
