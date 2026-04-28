@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ADMIN CARTA V 11.7 - ORDEN SEGURO</title>
+    <title>ADMIN CARTA V 11.8 - PC INFO EXTENDED</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primario: #e67e22; --fondo: #f4f7f6; --texto: #2c3e50; --verde: #27ae60; --rojo: #e74c3c; }
@@ -20,66 +20,27 @@
         .plato-info { flex: 1; min-width: 0; }
         .plato-nombre { font-weight: 600; font-size: 0.9rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
-        /* Contenedor de controles (PC) - Corregido para que no desaparezca el check */
+        /* INFO EXTRA PC (Columna E y F) */
+        .info-pc-extra { font-size: 0.7rem; color: #7f8c8d; margin-top: 4px; display: flex; gap: 10px; align-items: center; }
+        .tag-carpeta { background: #ebf2f7; padding: 2px 6px; border-radius: 4px; color: #2980b9; font-weight: bold; }
+        .tag-imagen { color: #27ae60; display: flex; align-items: center; gap: 3px; }
+
         .plato-meta-footer { display: flex; align-items: center; gap: 15px; flex-shrink: 0; min-width: 180px; justify-content: flex-end; }
         .meta-left { display: flex; align-items: center; gap: 5px; }
         .meta-right { display: flex; align-items: center; gap: 15px; }
-        
         .plato-orden-btns { display: flex; flex-direction: column; gap: 4px; width: 35px; }
 
         /* MODIFICACIÓN MÓVIL */
         @media (max-width: 600px) {
-            .plato-item { 
-                display: grid; 
-                grid-template-columns: 40px 1fr; 
-                grid-template-rows: auto auto;
-                align-items: center; 
-                gap: 4px 12px; 
-                padding: 12px; 
-            }
-            
-            .plato-orden-btns { 
-                grid-column: 1; 
-                grid-row: 1 / span 2; 
-                display: flex; 
-                flex-direction: column; 
-                justify-content: center;
-                gap: 4px; 
-            }
-            
+            .info-pc-extra { display: none; } /* Ocultamos info extra en móvil */
+            .plato-item { display: grid; grid-template-columns: 40px 1fr; grid-template-rows: auto auto; align-items: center; gap: 4px 12px; padding: 12px; }
+            .plato-orden-btns { grid-column: 1; grid-row: 1 / span 2; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
             .btn-orden { padding: 6px 0; font-size: 0.85rem; width: 100%; }
-
-            .plato-info { 
-                grid-column: 2; 
-                grid-row: 1; 
-            }
-            
-            .plato-nombre { 
-                font-size: 0.95rem; 
-                line-height: 1.2; 
-                display: -webkit-box;
-                -webkit-line-clamp: 2; 
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-                margin: 0;
-                padding-right: 10px;
-                white-space: normal; /* Permite salto de línea en móvil */
-            }
-            
-            .plato-meta-footer { 
-                grid-column: 2; 
-                grid-row: 2; 
-                display: flex; 
-                align-items: center; 
-                justify-content: space-between; 
-                width: 100%;
-                gap: 0;
-                min-width: 0; /* Reset para el grid móvil */
-            }
-
+            .plato-info { grid-column: 2; grid-row: 1; }
+            .plato-nombre { font-size: 0.95rem; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0; padding-right: 10px; white-space: normal; }
+            .plato-meta-footer { grid-column: 2; grid-row: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 0; min-width: 0; }
             .meta-left { display: flex; align-items: center; gap: 5px; }
             .meta-right { display: flex; align-items: center; gap: 15px; }
-            
             .btn-config { padding: 4px 8px; font-size: 0.9rem; }
         }
 
@@ -113,7 +74,7 @@
 
 <div class="container">
     <div class="header-admin">
-        <h1>⚙️ GESTOR DE CARTA V 11.7</h1>
+        <h1>⚙️ GESTOR DE CARTA V 11.8</h1>
         <div id="status-carga">Cargando datos...</div>
     </div>
     <div id="editor-dinamico"></div>
@@ -230,6 +191,10 @@
             if (platos.length === 0) return;
             h += `<div class="categoria-tarjeta"><div class="categoria-titulo">${cat.name}</div>`;
             platos.forEach((p) => {
+                // Lógica de info extra para PC
+                let htmlImagen = p.imagen ? `<span class="tag-imagen">📷 ${p.imagen}</span>` : "";
+                let htmlCarpeta = p.carpeta ? `<span class="tag-carpeta">${p.carpeta}</span>` : "";
+
                 h += `<div class="plato-item">
                     <div class="plato-orden-btns">
                         <button class="btn-orden" onclick="moverPlato(${p.id}, 'subir')">▲</button>
@@ -237,6 +202,10 @@
                     </div>
                     <div class="plato-info">
                         <span class="plato-nombre">${p.es}</span>
+                        <div class="info-pc-extra">
+                            ${htmlCarpeta}
+                            ${htmlImagen}
+                        </div>
                     </div>
                     <div class="plato-meta-footer">
                         <div class="meta-left">
