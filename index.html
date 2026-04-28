@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ADMIN CARTA V 11.8 - PC INFO EXTENDED</title>
+    <title>ADMIN CARTA V 11.9 - MOBILE PHOTO ICON</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primario: #e67e22; --fondo: #f4f7f6; --texto: #2c3e50; --verde: #27ae60; --rojo: #e74c3c; }
@@ -27,21 +27,25 @@
 
         .plato-meta-footer { display: flex; align-items: center; gap: 15px; flex-shrink: 0; min-width: 180px; justify-content: flex-end; }
         .meta-left { display: flex; align-items: center; gap: 5px; }
+        .meta-center { display: none; } /* Oculto por defecto en PC */
         .meta-right { display: flex; align-items: center; gap: 15px; }
         .plato-orden-btns { display: flex; flex-direction: column; gap: 4px; width: 35px; }
 
-        /* MODIFICACIÓN MÓVIL */
+        /* MODIFICACIÓN MÓVIL - CORREGIDO PARA CABER EN UNA LINEA */
         @media (max-width: 600px) {
-            .info-pc-extra { display: none; } /* Ocultamos info extra en móvil */
+            .info-pc-extra { display: none; } 
             .plato-item { display: grid; grid-template-columns: 40px 1fr; grid-template-rows: auto auto; align-items: center; gap: 4px 12px; padding: 12px; }
             .plato-orden-btns { grid-column: 1; grid-row: 1 / span 2; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
             .btn-orden { padding: 6px 0; font-size: 0.85rem; width: 100%; }
             .plato-info { grid-column: 2; grid-row: 1; }
             .plato-nombre { font-size: 0.95rem; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0; padding-right: 10px; white-space: normal; }
-            .plato-meta-footer { grid-column: 2; grid-row: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 0; min-width: 0; }
-            .meta-left { display: flex; align-items: center; gap: 5px; }
-            .meta-right { display: flex; align-items: center; gap: 15px; }
-            .btn-config { padding: 4px 8px; font-size: 0.9rem; }
+            
+            /* Ajuste del footer para que sea una sola linea fluida */
+            .plato-meta-footer { grid-column: 2; grid-row: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 5px; min-width: 0; }
+            .meta-left { display: flex; align-items: center; gap: 5px; flex: 0 1 auto; white-space: nowrap; }
+            .meta-center { display: flex; align-items: center; justify-content: center; flex: 0 0 auto; font-size: 1rem; } 
+            .meta-right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; justify-content: flex-end; }
+            .btn-config { padding: 4px 6px; font-size: 0.85rem; }
         }
 
         .btn-config { background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; padding: 8px; cursor: pointer; }
@@ -74,7 +78,7 @@
 
 <div class="container">
     <div class="header-admin">
-        <h1>⚙️ GESTOR DE CARTA V 11.8</h1>
+        <h1>⚙️ GESTOR DE CARTA V 11.9</h1>
         <div id="status-carga">Cargando datos...</div>
     </div>
     <div id="editor-dinamico"></div>
@@ -191,9 +195,11 @@
             if (platos.length === 0) return;
             h += `<div class="categoria-tarjeta"><div class="categoria-titulo">${cat.name}</div>`;
             platos.forEach((p) => {
-                // Lógica de info extra para PC
-                let htmlImagen = p.imagen ? `<span class="tag-imagen">📷 ${p.imagen}</span>` : "";
-                let htmlCarpeta = p.carpeta ? `<span class="tag-carpeta">${p.carpeta}</span>` : "";
+                let htmlImagenPC = p.imagen ? `<span class="tag-imagen">📷 ${p.imagen}</span>` : "";
+                let htmlCarpetaPC = p.carpeta ? `<span class="tag-carpeta">${p.carpeta}</span>` : "";
+                
+                // Lógica de icono para Móvil (Solo si columna F tiene valor)
+                let htmlIconoFotoMovil = (p.imagen && p.imagen.trim() !== "") ? "📷" : "";
 
                 h += `<div class="plato-item">
                     <div class="plato-orden-btns">
@@ -203,14 +209,15 @@
                     <div class="plato-info">
                         <span class="plato-nombre">${p.es}</span>
                         <div class="info-pc-extra">
-                            ${htmlCarpeta}
-                            ${htmlImagen}
+                            ${htmlCarpetaPC}
+                            ${htmlImagenPC}
                         </div>
                     </div>
                     <div class="plato-meta-footer">
                         <div class="meta-left">
                             <small style="color:#888; font-weight:600;">ID ${p.id} | ${p.precio}€</small>
                         </div>
+                        <div class="meta-center">${htmlIconoFotoMovil}</div>
                         <div class="meta-right">
                             <button class="btn-config" onclick="abrirEditor(${p.id})">⚙️</button>
                             <label class="switch"><input type="checkbox" ${p.activa?'checked':''} onchange="toggleActivo(${p.id},this.checked)"><span class="slider"></span></label>
