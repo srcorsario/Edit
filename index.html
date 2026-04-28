@@ -20,18 +20,17 @@
         .plato-info { flex: 1; min-width: 0; }
         .plato-nombre { font-weight: 600; font-size: 0.9rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
-        /* INFO EXTRA PC (Columna E y F) */
+        /* INFO EXTRA PC */
         .info-pc-extra { font-size: 0.7rem; color: #7f8c8d; margin-top: 4px; display: flex; gap: 10px; align-items: center; }
         .tag-carpeta { background: #ebf2f7; padding: 2px 6px; border-radius: 4px; color: #2980b9; font-weight: bold; }
         .tag-imagen { color: #27ae60; display: flex; align-items: center; gap: 3px; }
 
         .plato-meta-footer { display: flex; align-items: center; gap: 15px; flex-shrink: 0; min-width: 180px; justify-content: flex-end; }
         .meta-left { display: flex; align-items: center; gap: 5px; }
-        .meta-center { display: none; } /* Oculto por defecto en PC */
+        .meta-center { display: none; } 
         .meta-right { display: flex; align-items: center; gap: 15px; }
         .plato-orden-btns { display: flex; flex-direction: column; gap: 4px; width: 35px; }
 
-        /* MODIFICACIÓN MÓVIL - CORREGIDO PARA CABER EN UNA LINEA */
         @media (max-width: 600px) {
             .info-pc-extra { display: none; } 
             .plato-item { display: grid; grid-template-columns: 40px 1fr; grid-template-rows: auto auto; align-items: center; gap: 4px 12px; padding: 12px; }
@@ -40,7 +39,6 @@
             .plato-info { grid-column: 2; grid-row: 1; }
             .plato-nombre { font-size: 0.95rem; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0; padding-right: 10px; white-space: normal; }
             
-            /* Ajuste del footer para que sea una sola linea fluida */
             .plato-meta-footer { grid-column: 2; grid-row: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 5px; min-width: 0; }
             .meta-left { display: flex; align-items: center; gap: 5px; flex: 0 1 auto; white-space: nowrap; }
             .meta-center { display: flex; align-items: center; justify-content: center; flex: 0 0 auto; font-size: 1rem; } 
@@ -128,8 +126,9 @@
 </div>
 
 <script>
+    // --- CONFIGURACIÓN ---
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSMhPbZuQWubawpjneIaAwSkxqFw-3LcmVw5xBuU_kxjMHpT1Sa8N7aZq9yxU4DZBawr4qNQmWlMnOy/pub?gid=0&single=true&output=csv';
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxHl0RK3OaZkgp7wvhT5XIWPbuCrKWH6dv1lSRi9Sq-fN4au1M5anRS14dg9M1K6r0/exec';
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxYVBrza5DhVHx2Rhy5pkkb_w-Uuh611xFdIj9CGAFbQSZKBvH1SPpTpmG6XvdRutYK/exec';
     
     let datosLocales = [];
     let platoEditandoId = null;
@@ -197,8 +196,6 @@
             platos.forEach((p) => {
                 let htmlImagenPC = p.imagen ? `<span class="tag-imagen">📷 ${p.imagen}</span>` : "";
                 let htmlCarpetaPC = p.carpeta ? `<span class="tag-carpeta">${p.carpeta}</span>` : "";
-                
-                // Lógica de icono para Móvil (Solo si columna F tiene valor)
                 let htmlIconoFotoMovil = (p.imagen && p.imagen.trim() !== "") ? "📷" : "";
 
                 h += `<div class="plato-item">
@@ -343,6 +340,8 @@
         document.getElementById(id).style.display = 'none'; 
         if(id === 'modal-editor') { esNuevoPlato = false; datosTempNuevo = null; }
     }
+
+    // Iniciar carga de datos al abrir
     cargar();
 </script>
 </body>
