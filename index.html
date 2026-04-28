@@ -15,12 +15,11 @@
         .categoria-tarjeta { background: white; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .categoria-titulo { background: var(--primario); color: white; padding: 10px 15px; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
         
-        /* Estilos Base Plato (PC) */
+        /* Estilos Base Plato */
         .plato-item { display: flex; padding: 12px; border-bottom: 1px solid #f1f2f6; gap: 10px; align-items: center; }
         .plato-info { flex: 1; min-width: 0; }
         .plato-nombre { font-weight: 600; font-size: 0.9rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
-        /* INFO EXTRA PC */
         .info-pc-extra { font-size: 0.7rem; color: #7f8c8d; margin-top: 4px; display: flex; gap: 10px; align-items: center; }
         .tag-carpeta { background: #ebf2f7; padding: 2px 6px; border-radius: 4px; color: #2980b9; font-weight: bold; }
         .tag-imagen { color: #27ae60; display: flex; align-items: center; gap: 3px; }
@@ -126,12 +125,10 @@
 </div>
 
 <script>
-    // --- CONFIGURACIÓN ---
-	const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9rPlxpax2lE0rN97c6Hoy_OxUwREqRb48juEBr9C91ZFY2UvaKgC8JdiRcwDrtBErXFVmFRh0Zr5e/pub?gid=0&single=true&output=csv';
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwj86K6L74otcVRpSyBS8LEVtx8gLyrZU4LvDpYonqiCJ-YERwWQonyahfJwFStz0-2/exec';
-	                     
+    // --- CONFIGURACIÓN ACTUALIZADA CON TUS NUEVOS DATOS ---
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9rPlxpax2lE0rN97c6Hoy_OxUwREqRb48juEBr9C91ZFY2UvaKgC8JdiRcwDrtBErXFVmFRh0Zr5e/pub?gid=0&single=true&output=csv';
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz2wu6B0m-QWZLqDRXhWcONg0Lta3uhTDOXq1lly43p5XKC7uvReeT6HcfC8K0LTLusTA/exec';
 
-    
     let datosLocales = [];
     let platoEditandoId = null;
     let esNuevoPlato = false; 
@@ -164,7 +161,7 @@
 
     async function cargar() {
         try {
-            const resp = await fetch(CSV_URL + '&cache=' + Date.now());
+            const resp = await fetch(CSV_URL + '&t=' + Date.now());
             const text = await resp.text();
             const filas = text.split(/\r?\n/).filter(f => f.trim() !== "");
             datosLocales = [];
@@ -174,7 +171,8 @@
                 const id = parseInt(c[0]);
                 if (!isNaN(id)) {
                     datosLocales.push({
-                        id: id, precio: c[1]||"0.00", activa: (c[2]||"").toLowerCase().includes("si"),
+                        id: id, precio: c[1]||"0.00", 
+                        activa: (c[2]||"").trim().toUpperCase() === "SI",
                         es: superLimpiar(c[3]), carpeta: c[4]||"", imagen: c[5]||"",
                         alergenos: superLimpiar(c[6]), en: superLimpiar(c[7]), 
                         de: superLimpiar(c[8]), fr: superLimpiar(c[9]), it: superLimpiar(c[10])
@@ -185,7 +183,7 @@
             document.getElementById('status-carga').className = "status-ok";
             renderizar();
             generarMenuAgrupado();
-        } catch (e) { document.getElementById('status-carga').innerText = "❌ Error al cargar CSV"; }
+        } catch (e) { document.getElementById('status-carga').innerText = "❌ Error al cargar"; }
     }
 
     function renderizar() {
@@ -198,8 +196,6 @@
             platos.forEach((p) => {
                 let htmlImagenPC = p.imagen ? `<span class="tag-imagen">📷 ${p.imagen}</span>` : "";
                 let htmlCarpetaPC = p.carpeta ? `<span class="tag-carpeta">${p.carpeta}</span>` : "";
-                let htmlIconoFotoMovil = (p.imagen && p.imagen.trim() !== "") ? "📷" : "";
-
                 h += `<div class="plato-item">
                     <div class="plato-orden-btns">
                         <button class="btn-orden" onclick="moverPlato(${p.id}, 'subir')">▲</button>
@@ -207,16 +203,10 @@
                     </div>
                     <div class="plato-info">
                         <span class="plato-nombre">${p.es}</span>
-                        <div class="info-pc-extra">
-                            ${htmlCarpetaPC}
-                            ${htmlImagenPC}
-                        </div>
+                        <div class="info-pc-extra">${htmlCarpetaPC} ${htmlImagenPC}</div>
                     </div>
                     <div class="plato-meta-footer">
-                        <div class="meta-left">
-                            <small style="color:#888; font-weight:600;">ID ${p.id} | ${p.precio}€</small>
-                        </div>
-                        <div class="meta-center">${htmlIconoFotoMovil}</div>
+                        <div class="meta-left"><small>ID ${p.id} | ${p.precio}€</small></div>
                         <div class="meta-right">
                             <button class="btn-config" onclick="abrirEditor(${p.id})">⚙️</button>
                             <label class="switch"><input type="checkbox" ${p.activa?'checked':''} onchange="toggleActivo(${p.id},this.checked)"><span class="slider"></span></label>
@@ -230,24 +220,22 @@
     }
 
     function moverPlato(id, direccion) {
-        datosLocales.sort((a, b) => a.id - b.id);
         const idx = datosLocales.findIndex(x => x.id === id);
-        const pActual = datosLocales[idx];
-        let pVecino = null;
-        if (direccion === 'subir' && idx > 0) { pVecino = datosLocales[idx - 1]; } 
-        else if (direccion === 'bajar' && idx < datosLocales.length - 1) { pVecino = datosLocales[idx + 1]; }
-        if (pVecino && pActual.id >= 0 && pVecino.id >= 0) {
-            const tempId = pActual.id;
-            pActual.id = pVecino.id;
-            pVecino.id = tempId;
-            renderizar();
+        if (direccion === 'subir' && idx > 0) {
+            const temp = datosLocales[idx].id;
+            datosLocales[idx].id = datosLocales[idx-1].id;
+            datosLocales[idx-1].id = temp;
+        } else if (direccion === 'bajar' && idx < datosLocales.length - 1) {
+            const temp = datosLocales[idx].id;
+            datosLocales[idx].id = datosLocales[idx+1].id;
+            datosLocales[idx+1].id = temp;
         }
+        renderizar();
     }
 
     function abrirEditor(id, esNuevo = false) {
-        let p;
-        if(esNuevo) { p = datosTempNuevo; esNuevoPlato = true; } 
-        else { p = datosLocales.find(x => x.id === id); esNuevoPlato = false; }
+        let p = esNuevo ? datosTempNuevo : datosLocales.find(x => x.id === id);
+        esNuevoPlato = esNuevo;
         platoEditandoId = id;
         document.getElementById('edit-es').value = p.es;
         document.getElementById('edit-en').value = p.en;
@@ -256,24 +244,17 @@
         document.getElementById('edit-it').value = p.it;
         document.getElementById('edit-precio').value = p.precio;
         document.getElementById('edit-imagen').value = p.imagen;
-        const actuales = p.alergenos.split(',').map(s => s.trim().toUpperCase()).filter(s => s !== "");
+        const actuales = p.alergenos.split(',').map(s => s.trim().toUpperCase());
         document.getElementById('alergenos-grid').innerHTML = ALERGENOS_LISTA.map(a => {
             const sel = actuales.includes(a) ? 'selected' : '';
-            const esDieta = (a === "VEGANO" || a === "VEGETARIANO") ? "es-dieta" : "";
-            return `<div class="alergeno-btn ${sel} ${esDieta}" onclick="this.classList.toggle('selected')">${a}</div>`;
+            return `<div class="alergeno-btn ${sel}" onclick="this.classList.toggle('selected')">${a}</div>`;
         }).join('');
         document.getElementById('modal-editor').style.display = 'block';
     }
 
     function aplicarCambiosPlato() {
-        let p;
-        if (esNuevoPlato) {
-            p = datosTempNuevo;
-            datosLocales.push(p);
-            esNuevoPlato = false;
-        } else {
-            p = datosLocales.find(x => x.id === platoEditandoId);
-        }
+        let p = esNuevoPlato ? datosTempNuevo : datosLocales.find(x => x.id === platoEditandoId);
+        if(esNuevoPlato) datosLocales.push(p);
         p.es = superLimpiar(document.getElementById('edit-es').value);
         p.en = superLimpiar(document.getElementById('edit-en').value);
         p.de = superLimpiar(document.getElementById('edit-de').value);
@@ -281,18 +262,17 @@
         p.it = superLimpiar(document.getElementById('edit-it').value);
         p.precio = parseFloat(document.getElementById('edit-precio').value || 0).toFixed(2);
         p.imagen = superLimpiar(document.getElementById('edit-imagen').value);
-        p.alergenos = Array.from(document.querySelectorAll('.alergeno-btn.selected')).map(el => el.innerText.trim()).join(', ');
-        cerrarModal('modal-editor'); 
+        p.alergenos = Array.from(document.querySelectorAll('.alergeno-btn.selected')).map(el => el.innerText).join(', ');
+        cerrarModal('modal-editor');
         renderizar();
     }
 
     function generarMenuAgrupado() {
         let h = "";
         ESTRUCTURA.forEach(cat => {
-            h += `<div style="margin-bottom:10px; border:1px solid #ddd; border-radius:8px; overflow:hidden;"><div style="background:#f8f9fa; padding:8px; font-size:0.7rem; font-weight:700;">${cat.name}</div>`;
-            if (cat.sub) {
-                cat.sub.forEach(s => { h += `<button onclick="prepararNuevoPlato(${s.id})" style="width:100%; text-align:left; padding:12px; border:none; border-bottom:1px solid #f1f1f1; background:white; font-size:0.85rem; cursor:pointer;">+ Añadir en ${s.name}</button>`; });
-            } else { h += `<button onclick="prepararNuevoPlato(${cat.id})" style="width:100%; text-align:left; padding:12px; border:none; background:white; font-size:0.85rem; cursor:pointer;">+ Añadir en ${cat.name}</button>`; }
+            h += `<div style="margin-bottom:10px;"><div style="background:#eee;padding:5px;font-size:0.7rem;">${cat.name}</div>`;
+            if (cat.sub) cat.sub.forEach(s => h += `<button onclick="prepararNuevoPlato(${s.id})" style="width:100%;text-align:left;padding:10px;background:white;border:1px solid #ddd;">+ ${s.name}</button>`);
+            else h += `<button onclick="prepararNuevoPlato(${cat.id})" style="width:100%;text-align:left;padding:10px;background:white;border:1px solid #ddd;">+ ${cat.name}</button>`;
             h += `</div>`;
         });
         document.getElementById('lista-agrupada').innerHTML = h;
@@ -301,18 +281,7 @@
     function prepararNuevoPlato(baseId) {
         const similares = datosLocales.filter(p => p.id >= baseId && p.id <= baseId + 99);
         const nuevoId = similares.length > 0 ? Math.max(...similares.map(p => p.id)) + 1 : baseId;
-        let carpetaAsignada = "";
-        let imagenAsignada = "";
-        for (const cat of ESTRUCTURA) {
-            if (cat.sub) {
-                const subEncontrada = cat.sub.find(s => s.id === baseId);
-                if (subEncontrada) { carpetaAsignada = subEncontrada.folder || ""; imagenAsignada = subEncontrada.img || ""; break; }
-            } else if (cat.id === baseId) { carpetaAsignada = cat.folder || ""; break; }
-        }
-        datosTempNuevo = { 
-            id: nuevoId, precio: "0.00", activa: true, es: "NUEVO PLATO", 
-            carpeta: carpetaAsignada, imagen: imagenAsignada, alergenos: "", en:"", de:"", fr:"", it:"" 
-        };
+        datosTempNuevo = { id: nuevoId, precio: "0.00", activa: true, es: "NUEVO PLATO", carpeta: "", imagen: "", alergenos: "", en:"", de:"", fr:"", it:"" };
         cerrarModal('modal-selector');
         abrirEditor(nuevoId, true);
     }
@@ -328,22 +297,18 @@
         }));
         try {
             await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert("✅ Cambios enviados. En unos segundos se verá en la carta.");
+            alert("✅ Guardado con éxito.");
             location.reload();
         } catch (e) { 
-            alert("Error al conectar"); 
-            btn.disabled = false; btn.innerText = "💾 GUARDAR Y REORDENAR EXCEL"; 
+            alert("Error al guardar"); 
+            btn.disabled = false; btn.innerText = "💾 GUARDAR"; 
         }
     }
 
     function toggleActivo(id, v) { datosLocales.find(x => x.id === id).activa = v; }
     function abrirSelector() { document.getElementById('modal-selector').style.display = 'block'; }
-    function cerrarModal(id) { 
-        document.getElementById(id).style.display = 'none'; 
-        if(id === 'modal-editor') { esNuevoPlato = false; datosTempNuevo = null; }
-    }
+    function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // Iniciar carga de datos al abrir
     cargar();
 </script>
 </body>
