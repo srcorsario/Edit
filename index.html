@@ -172,11 +172,30 @@
         { id: 9000, name: "9- Cafés", sub: [{id: 9000, name: "Cafés", folder: "cafe"},{id: 9100, name: "Infusiones", folder: "cafe"}]},
         { id: 10000, name: "10- Bebidas", sub: [{id: 10000, name: "Refrescos", folder: "refrescos"},{id: 10100, name: "Zumos", folder: "refrescos"},{id: 10200, name: "Otros", folder: "refrescos"}]},
         { id: 11000, name: "11- Cervezas", folder: "cerveza" },
-        // --- SECCIÓN VINOS ---
-        { id: 13100, name: "13.1- Vinos Blancos", sub: [{id: 13100, name: "Mallorca", folder: "vinos"},{id: 13130, name: "Galicia", folder: "vinos"},{id: 13140, name: "Rueda", folder: "vinos"},{id: 13150, name: "Otras D.O.", folder: "vinos"},{id: 13190, name: "Copas", folder: "vinos"}]},
-        { id: 13200, name: "13.2- Vinos Rosados", sub: [{id: 13200, name: "Mallorca", folder: "vinos"},{id: 13250, name: "Copas", folder: "vinos"}]},
-        { id: 13300, name: "13.3- Vinos Tintos", sub: [{id: 13300, name: "Mallorca", folder: "vinos"},{id: 13330, name: "Rioja", folder: "vinos"},{id: 13340, name: "Ribera", folder: "vinos"},{id: 13370, name: "Otras D.O.", folder: "vinos"},{id: 13390, name: "Copas", folder: "vinos"}]},
-        { id: 13400, name: "13.4- Cavas & Champagne", sub: [{id: 13400, name: "Botellas", folder: "vinos"},{id: 13450, name: "Copas", folder: "vinos"}]}
+        
+        // --- SECCIÓN VINOS (CORREGIDA SIN SOLAPAMIENTOS) ---
+        { id: 13100, name: "13.1- Vinos Blancos", sub: [
+            {id: 13100, name: "Blancos: Mallorca", folder: "vinos"},
+            {id: 13130, name: "Blancos: Galicia", folder: "vinos"},
+            {id: 13140, name: "Blancos: Rueda", folder: "vinos"},
+            {id: 13150, name: "Blancos: Otras D.O.", folder: "vinos"},
+            {id: 13190, name: "Blancos: Copas", folder: "vinos"}
+        ]},
+        { id: 13200, name: "13.2- Vinos Rosados", sub: [
+            {id: 13200, name: "Rosados: Mallorca", folder: "vinos"},
+            {id: 13250, name: "Rosados: Copas", folder: "vinos"}
+        ]},
+        { id: 13300, name: "13.3- Vinos Tintos", sub: [
+            {id: 13300, name: "Tintos: Mallorca", folder: "vinos"},
+            {id: 13330, name: "Tintos: Rioja", folder: "vinos"},
+            {id: 13350, name: "Tintos: Ribera", folder: "vinos"},
+            {id: 13370, name: "Tintos: Otras D.O.", folder: "vinos"},
+            {id: 13390, name: "Tintos: Copas", folder: "vinos"}
+        ]},
+        { id: 13400, name: "13.4- Cavas & Champagne", sub: [
+            {id: 13400, name: "Cavas: Botellas", folder: "vinos"},
+            {id: 13450, name: "Cavas: Copas", folder: "vinos"}
+        ]}
     ];
 
     function superLimpiar(texto) {
@@ -187,7 +206,6 @@
         return t.trim();
     }
 
-    // Procesa el texto que viene del CSV (Nombre // Uvas)
     function desglosarNombre(texto) {
         if (!texto) return { nombre: "", uvas: "" };
         const partes = texto.split('//');
@@ -277,7 +295,6 @@
         esNuevoPlato = esNuevo;
         platoEditandoId = id;
 
-        // Desglosamos cada idioma para rellenar nombre y uvas por separado
         const langs = ['es', 'en', 'de', 'fr', 'it'];
         langs.forEach(l => {
             const data = desglosarNombre(p[l]);
@@ -299,7 +316,6 @@
         let p = esNuevoPlato ? datosTempNuevo : datosLocales.find(x => x.id === platoEditandoId);
         if(esNuevoPlato) datosLocales.push(p);
 
-        // Unimos Nombre // Uvas para cada idioma al guardar
         const langs = ['es', 'en', 'de', 'fr', 'it'];
         langs.forEach(l => {
             const nom = superLimpiar(document.getElementById(`edit-${l}`).value);
