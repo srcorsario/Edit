@@ -82,7 +82,7 @@
     <div class="modal-content">
         <h2 id="modal-titulo" style="margin-top:0; color:var(--primario); border-bottom: 2px solid #eee; padding-bottom: 10px;">Editar Elemento</h2>
         <div class="input-group">
-            <label>Nombres y Uvas (Uvas solo para Vinos)</label>
+            <label id="label-uvas">Nombres y Detalles</label>
             <div class="input-row-lang">
                 <div class="lang-tag">ES</div>
                 <div style="flex:1">
@@ -159,7 +159,6 @@
 
     const ALERGENOS_LISTA = ["GLUTEN", "SESAMO", "CACAHUETE", "SOJA", "FRUTOSCASCARA", "APIO", "HUEVO", "PESCADO", "MOSTAZA", "MOLUSCO", "SULFITOS", "LACTOSA", "ALTRAMUCES", "CRUSTACEO", "VEGANO", "VEGETARIANO"];
 
-    // RESTAURADA ESTRUCTURA ORIGINAL con soporte de rangos
     const ESTRUCTURA = [
         { id: 12000, name: "Sugerencias", rango: 999, sub: [{id: 12100, name: "Croquetas", folder: "entrantes"},{id: 12200, name: "Croquetas Veg.", folder: "entrantes"},{id: 12300, name: "Entrantes", folder: "entrantes"},{id: 12400, name: "Pasta", folder: "pasta"},{id: 12500, name: "Arroz", folder: "arroz"},{id: 12700, name: "Pescado", folder: "pescado"},{id: 12800, name: "Carne", folder: "carne"},{id: 12900, name: "Postres", folder: "postres"}]},
         { id: 1000, name: "1- Entrantes", rango: 999, sub: [{id: 1000, name: "Entrantes", folder: "entrantes"},{id: 1100, name: "Pan", folder: "entrantes"}]},
@@ -275,12 +274,20 @@
         let p = esNuevo ? datosTempNuevo : datosLocales.find(x => x.id === id);
         esNuevoPlato = esNuevo;
         platoEditandoId = id;
+        
+        // Lógica de visibilidad para UVAS (Solo IDs 13000+)
+        const esVino = (id >= 13000);
+        document.getElementById('label-uvas').innerText = esVino ? "Nombres y Uvas (Uvas solo para Vinos)" : "Nombres";
+        
         const langs = ['es', 'en', 'de', 'fr', 'it'];
         langs.forEach(l => {
             const data = desglosarNombre(p[l] || "");
             document.getElementById(`edit-${l}`).value = data.nombre;
-            document.getElementById(`edit-${l}-uvas`).value = data.uvas;
+            const inputUva = document.getElementById(`edit-${l}-uvas`);
+            inputUva.value = data.uvas;
+            inputUva.style.display = esVino ? "block" : "none"; // OCULTAR SI NO ES VINO
         });
+        
         document.getElementById('edit-precio').value = p.precio;
         document.getElementById('edit-imagen').value = p.imagen;
         const actuales = (p.alergenos || "").split(',').map(s => s.trim().toUpperCase());
@@ -297,7 +304,9 @@
         const langs = ['es', 'en', 'de', 'fr', 'it'];
         langs.forEach(l => {
             const nom = superLimpiar(document.getElementById(`edit-${l}`).value);
-            const uvas = superLimpiar(document.getElementById(`edit-${l}-uvas`).value);
+            // Solo capturamos uvas si el input es visible (es vino)
+            const inputUva = document.getElementById(`edit-${l}-uvas`);
+            const uvas = inputUva.style.display !== "none" ? superLimpiar(inputUva.value) : "";
             p[l] = uvas ? `${nom} // ${uvas}` : nom;
         });
         p.precio = parseFloat(document.getElementById('edit-precio').value || 0).toFixed(2);
@@ -324,7 +333,6 @@
     }
 
     function prepararNuevoPlato(baseId, folder) {
-        // Buscamos platos que ya existan en ese rango específico (ej: 12100 a 12199)
         const similares = datosLocales.filter(p => p.id >= baseId && p.id <= baseId + 99);
         const nuevoId = similares.length > 0 ? Math.max(...similares.map(p => p.id)) + 1 : baseId;
         datosTempNuevo = { id: nuevoId, precio: "0.00", activa: true, es: "NUEVO", carpeta: folder, imagen: "", alergenos: "", en:"", de:"", fr:"", it:"" };
