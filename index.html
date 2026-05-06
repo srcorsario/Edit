@@ -14,20 +14,16 @@
         .status-ok { background: #d4edda; color: #155724; }
         .categoria-tarjeta { background: white; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .categoria-titulo { background: var(--primario); color: white; padding: 10px 15px; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
-        
         .plato-item { display: flex; padding: 12px; border-bottom: 1px solid #f1f2f6; gap: 10px; align-items: center; }
         .plato-info { flex: 1; min-width: 0; }
         .plato-nombre { font-weight: 600; font-size: 0.9rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        
         .info-pc-extra { font-size: 0.7rem; color: #7f8c8d; margin-top: 4px; display: flex; gap: 10px; align-items: center; }
         .tag-carpeta { background: #ebf2f7; padding: 2px 6px; border-radius: 4px; color: #2980b9; font-weight: bold; }
         .tag-imagen { color: #27ae60; display: flex; align-items: center; gap: 3px; }
-
         .plato-meta-footer { display: flex; align-items: center; gap: 15px; flex-shrink: 0; min-width: 180px; justify-content: flex-end; }
         .meta-left { display: flex; align-items: center; gap: 5px; }
         .meta-right { display: flex; align-items: center; gap: 15px; }
         .plato-orden-btns { display: flex; flex-direction: column; gap: 4px; width: 35px; }
-
         @media (max-width: 600px) {
             .info-pc-extra { display: none; } 
             .plato-item { display: grid; grid-template-columns: 40px 1fr; grid-template-rows: auto auto; align-items: center; gap: 4px 12px; padding: 12px; }
@@ -39,7 +35,6 @@
             .meta-left { display: flex; align-items: center; gap: 5px; flex: 0 1 auto; white-space: nowrap; }
             .meta-right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; justify-content: flex-end; }
         }
-
         .btn-config { background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; padding: 8px; cursor: pointer; }
         .btn-orden { background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 5px 8px; cursor: pointer; font-size: 1rem; }
         .btn-add-float { position: fixed; bottom: 85px; right: 20px; width: 60px; height: 60px; background: var(--primario); color: white; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; cursor: pointer; }
@@ -172,10 +167,33 @@
         { id: 9000, name: "9- Cafés", rango: 999, sub: [{id: 9000, name: "Cafés", folder: "cafe"},{id: 9100, name: "Infusiones", folder: "cafe"}]},
         { id: 10000, name: "10- Bebidas", rango: 999, sub: [{id: 10000, name: "Refrescos", folder: "refrescos"},{id: 10100, name: "Zumos", folder: "refrescos"},{id: 10200, name: "Otros", folder: "refrescos"}]},
         { id: 11000, name: "11- Cervezas", rango: 999, folder: "cerveza" },
-        { id: 13100, name: "13.1- Vinos Blancos", rango: 99, sub: [{id: 13100, name: "Mallorca", folder: "vinos"},{id: 13130, name: "Galicia", folder: "vinos"},{id: 13140, name: "Rueda", folder: "vinos"},{id: 13150, name: "Otras D.O.", folder: "vinos"},{id: 13190, name: "Copas", folder: "vinos"}]},
-        { id: 13200, name: "13.2- Vinos Rosados", rango: 99, sub: [{id: 13200, name: "Mallorca", folder: "vinos"},{id: 13250, name: "Copas", folder: "vinos"}]},
-        { id: 13300, name: "13.3- Vinos Tintos", rango: 99, sub: [{id: 13300, name: "Mallorca", folder: "vinos"},{id: 13330, name: "Rioja", folder: "vinos"},{id: 13340, name: "Ribera", folder: "vinos"},{id: 13370, name: "Otras D.O.", folder: "vinos"},{id: 13390, name: "Copas", folder: "vinos"}]},
-        { id: 13400, name: "13.4- Cavas & Champagne", rango: 1000, sub: [{id: 13400, name: "Botellas", folder: "vinos"},{id: 13450, name: "Copas", folder: "vinos"}]}
+        
+        // VINOS BLANCOS (13100-13199)
+        { id: 13100, name: "13.1- Vinos Blancos", rango: 99, sub: [
+            {id: 13100, name: "Mallorca", folder: "vinos", max: 13129},
+            {id: 13130, name: "Galicia", folder: "vinos", max: 13139},
+            {id: 13140, name: "Rueda", folder: "vinos", max: 13149},
+            {id: 13150, name: "Otras D.O.", folder: "vinos", max: 13189},
+            {id: 13190, name: "Copas", folder: "vinos", max: 13199}
+        ]},
+        // VINOS ROSADOS (13200-13299)
+        { id: 13200, name: "13.2- Vinos Rosados", rango: 99, sub: [
+            {id: 13200, name: "Vinos Rosados", folder: "vinos", max: 13249},
+            {id: 13250, name: "Copas", folder: "vinos", max: 13259}
+        ]},
+        // VINOS TINTOS (13300-13400)
+        { id: 13300, name: "13.3- Vinos Tintos", rango: 100, sub: [
+            {id: 13300, name: "Mallorca", folder: "vinos", max: 13329},
+            {id: 13330, name: "Rioja", folder: "vinos", max: 13349},
+            {id: 13350, name: "Ribera", folder: "vinos", max: 13369},
+            {id: 13370, name: "Otras D.O.", folder: "vinos", max: 13389},
+            {id: 13390, name: "Copas", folder: "vinos", max: 13399}
+        ]},
+        // CAVA Y CHAMPAGNE (13400-14499)
+        { id: 13400, name: "13.4- Cavas & Champagne", rango: 1099, sub: [
+            {id: 13400, name: "Botellas", folder: "vinos", max: 13449},
+            {id: 13450, name: "Copas", folder: "vinos", max: 13459}
+        ]}
     ];
 
     function superLimpiar(texto) {
@@ -274,20 +292,16 @@
         let p = esNuevo ? datosTempNuevo : datosLocales.find(x => x.id === id);
         esNuevoPlato = esNuevo;
         platoEditandoId = id;
-        
-        // Lógica de visibilidad para UVAS (Solo IDs 13000+)
         const esVino = (id >= 13000);
         document.getElementById('label-uvas').innerText = esVino ? "Nombres y Uvas (Uvas solo para Vinos)" : "Nombres";
-        
         const langs = ['es', 'en', 'de', 'fr', 'it'];
         langs.forEach(l => {
             const data = desglosarNombre(p[l] || "");
             document.getElementById(`edit-${l}`).value = data.nombre;
             const inputUva = document.getElementById(`edit-${l}-uvas`);
             inputUva.value = data.uvas;
-            inputUva.style.display = esVino ? "block" : "none"; // OCULTAR SI NO ES VINO
+            inputUva.style.display = esVino ? "block" : "none";
         });
-        
         document.getElementById('edit-precio').value = p.precio;
         document.getElementById('edit-imagen').value = p.imagen;
         const actuales = (p.alergenos || "").split(',').map(s => s.trim().toUpperCase());
@@ -304,7 +318,6 @@
         const langs = ['es', 'en', 'de', 'fr', 'it'];
         langs.forEach(l => {
             const nom = superLimpiar(document.getElementById(`edit-${l}`).value);
-            // Solo capturamos uvas si el input es visible (es vino)
             const inputUva = document.getElementById(`edit-${l}-uvas`);
             const uvas = inputUva.style.display !== "none" ? superLimpiar(inputUva.value) : "";
             p[l] = uvas ? `${nom} // ${uvas}` : nom;
@@ -333,8 +346,24 @@
     }
 
     function prepararNuevoPlato(baseId, folder) {
-        const similares = datosLocales.filter(p => p.id >= baseId && p.id <= baseId + 99);
+        // Buscamos el límite máximo definido en la estructura para esta subcategoría
+        let maxPermitido = baseId + 99;
+        ESTRUCTURA.forEach(cat => {
+            if(cat.sub) {
+                const sub = cat.sub.find(s => s.id === baseId);
+                if(sub && sub.max) maxPermitido = sub.max;
+            }
+        });
+
+        // Solo buscamos platos similares dentro del rango estricto de la subcategoría
+        const similares = datosLocales.filter(p => p.id >= baseId && p.id <= maxPermitido);
         const nuevoId = similares.length > 0 ? Math.max(...similares.map(p => p.id)) + 1 : baseId;
+        
+        if(nuevoId > maxPermitido) {
+            alert("Límite de IDs alcanzado para esta subcategoría.");
+            return;
+        }
+
         datosTempNuevo = { id: nuevoId, precio: "0.00", activa: true, es: "NUEVO", carpeta: folder, imagen: "", alergenos: "", en:"", de:"", fr:"", it:"" };
         cerrarModal('modal-selector');
         abrirEditor(nuevoId, true);
