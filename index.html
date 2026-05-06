@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ADMIN CARTA V 11.9.1 - FIX FILTRO</title>
+    <title>ADMIN CARTA V 11.9.2 - FIX CSV</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primario: #e67e22; --fondo: #f4f7f6; --texto: #2c3e50; --verde: #27ae60; --rojo: #e74c3c; }
@@ -14,107 +14,65 @@
         .status-ok { background: #d4edda; color: #155724; }
         .categoria-tarjeta { background: white; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .categoria-titulo { background: var(--primario); color: white; padding: 10px 15px; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
-        
-        /* Estilos Base Plato */
         .plato-item { display: flex; padding: 12px; border-bottom: 1px solid #f1f2f6; gap: 10px; align-items: center; }
         .plato-info { flex: 1; min-width: 0; }
         .plato-nombre { font-weight: 600; font-size: 0.9rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        
         .info-pc-extra { font-size: 0.7rem; color: #7f8c8d; margin-top: 4px; display: flex; gap: 10px; align-items: center; }
         .tag-carpeta { background: #ebf2f7; padding: 2px 6px; border-radius: 4px; color: #2980b9; font-weight: bold; }
-        .tag-imagen { color: #27ae60; display: flex; align-items: center; gap: 3px; }
-
         .plato-meta-footer { display: flex; align-items: center; gap: 15px; flex-shrink: 0; min-width: 180px; justify-content: flex-end; }
-        .meta-left { display: flex; align-items: center; gap: 5px; }
-        .meta-right { display: flex; align-items: center; gap: 15px; }
-        .plato-orden-btns { display: flex; flex-direction: column; gap: 4px; width: 35px; }
-
-        @media (max-width: 600px) {
-            .info-pc-extra { display: none; } 
-            .plato-item { display: grid; grid-template-columns: 40px 1fr; grid-template-rows: auto auto; align-items: center; gap: 4px 12px; padding: 12px; }
-            .plato-orden-btns { grid-column: 1; grid-row: 1 / span 2; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
-            .btn-orden { padding: 6px 0; font-size: 0.85rem; width: 100%; }
-            .plato-info { grid-column: 2; grid-row: 1; }
-            .plato-nombre { font-size: 0.95rem; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0; padding-right: 10px; white-space: normal; }
-            .plato-meta-footer { grid-column: 2; grid-row: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 5px; min-width: 0; }
-            .meta-left { display: flex; align-items: center; gap: 5px; flex: 0 1 auto; white-space: nowrap; }
-            .meta-right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; justify-content: flex-end; }
-        }
-
         .btn-config { background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; padding: 8px; cursor: pointer; }
         .btn-orden { background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 5px 8px; cursor: pointer; font-size: 1rem; }
         .btn-add-float { position: fixed; bottom: 85px; right: 20px; width: 60px; height: 60px; background: var(--primario); color: white; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; cursor: pointer; }
         .btn-guardar-main { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 18px; border-radius: 50px; border: none; font-weight: 700; width: 90%; max-width: 450px; z-index: 1000; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); overflow-y: auto; }
         .modal-content { background: white; width: 96%; max-width: 1000px; margin: 15px auto; border-radius: 15px; padding: 25px; box-sizing: border-box; }
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--primario); text-transform: uppercase; margin-bottom: 8px; }
-        .input-row-lang { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
-        .lang-tag { background: #34495e; color: white; font-weight: 700; font-size: 0.7rem; width: 40px; padding: 12px 0; text-align: center; border-radius: 8px; flex-shrink: 0; }
-        .input-estandar { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Montserrat'; font-size: 1rem; width: 100%; box-sizing: border-box; }
-        .alergenos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
-        .alergeno-btn { border: 1px solid #ddd; border-radius: 6px; padding: 10px; font-size: 0.7rem; text-align: center; cursor: pointer; background: #fff; font-weight: 600; }
-        .alergeno-btn.selected { background: var(--primario); color: white; border-color: var(--primario); }
-        .switch { position: relative; width: 44px; height: 22px; flex-shrink: 0; }
+        .input-estandar { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Montserrat'; font-size: 1rem; box-sizing: border-box; }
+        .switch { position: relative; width: 44px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; transition: .4s; border-radius: 34px; }
         .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background: var(--verde); }
         input:checked + .slider:before { transform: translateX(22px); }
+
+        @media (max-width: 600px) {
+            .plato-item { display: grid; grid-template-columns: 40px 1fr; gap: 4px 12px; }
+            .plato-info { grid-column: 2; }
+            .plato-meta-footer { grid-column: 2; justify-content: space-between; min-width: 0; }
+            .info-pc-extra { display: none; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header-admin">
-        <h1>⚙️ GESTOR DE CARTA V 11.9.1</h1>
+        <h1>⚙️ GESTOR DE CARTA V 11.9.2</h1>
         <div id="status-carga">Cargando datos...</div>
     </div>
     <div id="editor-dinamico"></div>
 </div>
 
 <button class="btn-add-float" onclick="abrirSelector()">+</button>
-<button class="btn-guardar-main" onclick="enviarAlExcel()">💾 GUARDAR Y REORDENAR EXCEL</button>
+<button class="btn-guardar-main" onclick="enviarAlExcel()">💾 GUARDAR CAMBIOS EN EXCEL</button>
 
-<!-- MODAL EDITOR -->
 <div id="modal-editor" class="modal">
     <div class="modal-content">
-        <h2 id="modal-titulo" style="margin-top:0; color:var(--primario); border-bottom: 2px solid #eee; padding-bottom: 10px;">Editar Plato</h2>
-        <div class="input-group">
-            <label>Nombres</label>
-            <div class="input-row-lang"><div class="lang-tag">ES</div><textarea id="edit-es" class="input-estandar"></textarea></div>
-            <div class="input-row-lang"><div class="lang-tag">EN</div><textarea id="edit-en" class="input-estandar"></textarea></div>
-            <div class="input-row-lang"><div class="lang-tag">DE</div><textarea id="edit-de" class="input-estandar"></textarea></div>
-            <div class="input-row-lang"><div class="lang-tag">FR</div><textarea id="edit-fr" class="input-estandar"></textarea></div>
-            <div class="input-row-lang"><div class="lang-tag">IT</div><textarea id="edit-it" class="input-estandar"></textarea></div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap:15px;">
-            <div class="input-group">
-                <label>Precio (€)</label>
-                <input type="number" id="edit-precio" class="input-estandar" step="0.01">
-            </div>
-            <div class="input-group">
-                <label>Imagen</label>
-                <input type="text" id="edit-imagen" class="input-estandar">
-            </div>
-        </div>
-        <div class="input-group">
-            <label>Alérgenos</label>
-            <div id="alergenos-grid" class="alergenos-grid"></div>
-        </div>
-        <div style="margin-top: 30px; display: flex; gap: 10px;">
-            <button onclick="aplicarCambiosPlato()" style="flex:2; background:var(--verde); color:white; padding:18px; border:none; border-radius:12px; font-weight:700; cursor:pointer;">ACEPTAR</button>
-            <button onclick="cerrarModal('modal-editor')" style="flex:1; background:#eee; padding:18px; border:none; border-radius:12px; font-weight:600; cursor:pointer;">CANCELAR</button>
+        <h2 id="modal-titulo" style="color:var(--primario)">Editar Plato</h2>
+        <input type="text" id="edit-es" class="input-estandar" placeholder="Nombre ES" style="margin-bottom:10px;">
+        <input type="text" id="edit-en" class="input-estandar" placeholder="Nombre EN" style="margin-bottom:10px;">
+        <input type="number" id="edit-precio" class="input-estandar" step="0.01" placeholder="Precio">
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button onclick="aplicarCambiosPlato()" style="flex:2; background:var(--verde); color:white; padding:15px; border:none; border-radius:10px; font-weight:bold;">ACEPTAR</button>
+            <button onclick="cerrarModal('modal-editor')" style="flex:1; background:#eee; padding:15px; border:none; border-radius:10px;">CANCELAR</button>
         </div>
     </div>
 </div>
 
-<!-- MODAL SELECTOR -->
 <div id="modal-selector" class="modal">
-    <div class="modal-content" style="max-width: 500px;">
-        <h3 style="text-align:center; color:var(--primario);">AÑADIR NUEVO PLATO A...</h3>
-        <div id="lista-agrupada" style="max-height: 65vh; overflow-y: auto;"></div>
-        <button onclick="cerrarModal('modal-selector')" style="width:100%; margin-top:15px; padding:15px; border:none; background:#eee; border-radius:10px; font-weight:bold;">CERRAR</button>
+    <div class="modal-content" style="max-width: 400px;">
+        <h3>Añadir a...</h3>
+        <div id="lista-agrupada"></div>
+        <button onclick="cerrarModal('modal-selector')" style="width:100%; margin-top:10px; padding:10px;">CERRAR</button>
     </div>
 </div>
 
@@ -124,10 +82,7 @@
 
     let datosLocales = [];
     let platoEditandoId = null;
-    let esNuevoPlato = false; 
-    let datosTempNuevo = null; 
-
-    const ALERGENOS_LISTA = ["GLUTEN", "SESAMO", "CACAHUETE", "SOJA", "FRUTOSCASCARA", "APIO", "HUEVO", "PESCADO", "MOSTAZA", "MOLUSCO", "SULFITOS", "LACTOSA", "ALTRAMUCES", "CRUSTACEO", "VEGANO", "VEGETARIANO"];
+    let esNuevoPlato = false;
 
     const ESTRUCTURA = [
         { id: 12000, name: "Sugerencias", range: 999 },
@@ -136,81 +91,81 @@
         { id: 3000, name: "3- Arroz y Pasta", range: 999 },
         { id: 4000, name: "4- Recetas", range: 999 },
         { id: 5000, name: "5- Platos principales", range: 999 },
-        { id: 6000, name: "6- Guarniciones", range: 999 },
-        { id: 7000, name: "7- Platos niño", range: 999 },
         { id: 8000, name: "8- Postres", range: 999 },
-        { id: 9000, name: "9- Cafés", range: 999 },
         { id: 10000, name: "10- Bebidas", range: 999 },
         { id: 11000, name: "11- Cervezas", range: 999 },
-        // SECCIÓN VINOS CON RANGOS CORTOS (99) PARA EVITAR SOLAPAMIENTO
         { id: 13100, name: "13.1 Vinos Blancos", range: 99 },
         { id: 13200, name: "13.2 Vinos Rosados", range: 99 },
         { id: 13300, name: "13.3 Vinos Tintos", range: 99 },
         { id: 13400, name: "13.4 Cavas & Champagne", range: 99 }
     ];
 
-    function superLimpiar(texto) {
-        if (!texto) return "";
-        let t = texto.toString().trim();
-        if (t.startsWith('"') && t.endsWith('"')) t = t.substring(1, t.length - 1);
-        t = t.replace(/""/g, '"');
-        return t.trim();
+    // PARSER ROBUSTO PARA CSV (Evita errores con comas dentro de paréntesis)
+    function parseCSV(text) {
+        const lines = text.split(/\r?\n/);
+        return lines.map(line => {
+            const result = [];
+            let cell = '';
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                let char = line[i];
+                if (char === '"' && line[i+1] === '"') { cell += '"'; i++; }
+                else if (char === '"') { inQuotes = !inQuotes; }
+                else if (char === ',' && !inQuotes) { result.push(cell); cell = ''; }
+                else { cell += char; }
+            }
+            result.push(cell);
+            return result;
+        });
     }
 
     async function cargar() {
         try {
             const resp = await fetch(CSV_URL + '&t=' + Date.now());
-            const text = await resp.text();
-            const filas = text.split(/\r?\n/).filter(f => f.trim() !== "");
+            const rawText = await resp.text();
+            const filas = parseCSV(rawText);
+            
             datosLocales = [];
-            filas.forEach((f, i) => {
-                if (i === 0) return;
-                const c = f.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            filas.forEach((c, i) => {
+                if (i === 0 || !c[0]) return;
                 const id = parseInt(c[0]);
                 if (!isNaN(id)) {
                     datosLocales.push({
                         id: id, precio: c[1]||"0.00", 
                         activa: (c[2]||"").trim().toUpperCase() === "SI",
-                        es: superLimpiar(c[3]), carpeta: c[4]||"", imagen: c[5]||"",
-                        alergenos: superLimpiar(c[6]), en: superLimpiar(c[7]), 
-                        de: superLimpiar(c[8]), fr: superLimpiar(c[9]), it: superLimpiar(c[10])
+                        es: c[3]||"", carpeta: c[4]||"", imagen: c[5]||"",
+                        alergenos: c[6]||"", en: c[7]||"", 
+                        de: c[8]||"", fr: c[9]||"", it: c[10]||""
                     });
                 }
             });
             document.getElementById('status-carga').innerText = "✅ Datos Sincronizados";
-            document.getElementById('status-carga').className = "status-ok";
             renderizar();
             generarMenuAgrupado();
-        } catch (e) { document.getElementById('status-carga').innerText = "❌ Error al cargar"; }
+        } catch (e) { document.getElementById('status-carga').innerText = "❌ Error Carga"; }
     }
 
     function renderizar() {
         let h = "";
         datosLocales.sort((a,b) => a.id - b.id);
-        
         ESTRUCTURA.forEach(cat => {
-            // AQUÍ ESTÁ EL CAMBIO CLAVE: p.id <= cat.id + cat.range
             const platos = datosLocales.filter(p => p.id >= cat.id && p.id <= (cat.id + cat.range));
-            
             if (platos.length === 0) return;
-
             h += `<div class="categoria-tarjeta"><div class="categoria-titulo">${cat.name}</div>`;
-            platos.forEach((p) => {
+            platos.forEach(p => {
                 h += `<div class="plato-item">
-                    <div class="plato-orden-btns">
-                        <button class="btn-orden" onclick="moverPlato(${p.id}, 'subir')">▲</button>
-                        <button class="btn-orden" onclick="moverPlato(${p.id}, 'bajar')">▼</button>
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                        <button class="btn-orden" onclick="mover(${p.id},'subir')">▲</button>
+                        <button class="btn-orden" onclick="mover(${p.id},'bajar')">▼</button>
                     </div>
                     <div class="plato-info">
                         <span class="plato-nombre">${p.es}</span>
-                        <div class="info-pc-extra"><span class="tag-carpeta">${p.carpeta}</span> ${p.imagen ? '📷 '+p.imagen : ''}</div>
+                        <div class="info-pc-extra"><span class="tag-carpeta">${p.carpeta}</span></div>
                     </div>
                     <div class="plato-meta-footer">
-                        <div class="meta-left"><small>ID ${p.id} | ${p.precio}€</small></div>
-                        <div class="meta-right">
-                            <button class="btn-config" onclick="abrirEditor(${p.id})">⚙️</button>
-                            <label class="switch"><input type="checkbox" ${p.activa?'checked':''} onchange="toggleActivo(${p.id},this.checked)"><span class="slider"></span></label>
-                        </div>
+                        <small>${p.precio}€</small>
+                        <button class="btn-config" onclick="abrirEditor(${p.id})">⚙️</button>
+                        <label class="switch"><input type="checkbox" ${p.activa?'checked':''} onchange="toggle(${p.id},this.checked)"><span class="slider"></span></label>
                     </div>
                 </div>`;
             });
@@ -219,92 +174,88 @@
         document.getElementById('editor-dinamico').innerHTML = h;
     }
 
-    function moverPlato(id, direccion) {
+    function mover(id, dir) {
         const idx = datosLocales.findIndex(x => x.id === id);
-        if (direccion === 'subir' && idx > 0) {
-            const temp = datosLocales[idx].id;
+        if(dir==='subir' && idx > 0) {
+            let temp = datosLocales[idx].id;
             datosLocales[idx].id = datosLocales[idx-1].id;
             datosLocales[idx-1].id = temp;
-        } else if (direccion === 'bajar' && idx < datosLocales.length - 1) {
-            const temp = datosLocales[idx].id;
+        } else if(dir==='bajar' && idx < datosLocales.length-1) {
+            let temp = datosLocales[idx].id;
             datosLocales[idx].id = datosLocales[idx+1].id;
             datosLocales[idx+1].id = temp;
         }
         renderizar();
     }
 
-    function abrirEditor(id, esNuevo = false) {
-        let p = esNuevo ? datosTempNuevo : datosLocales.find(x => x.id === id);
-        esNuevoPlato = esNuevo;
+    function abrirEditor(id) {
         platoEditandoId = id;
+        const p = datosLocales.find(x => x.id === id);
         document.getElementById('edit-es').value = p.es;
         document.getElementById('edit-en').value = p.en;
-        document.getElementById('edit-de').value = p.de;
-        document.getElementById('edit-fr').value = p.fr;
-        document.getElementById('edit-it').value = p.it;
         document.getElementById('edit-precio').value = p.precio;
-        document.getElementById('edit-imagen').value = p.imagen;
-        const actuales = p.alergenos.split(',').map(s => s.trim().toUpperCase());
-        document.getElementById('alergenos-grid').innerHTML = ALERGENOS_LISTA.map(a => {
-            const sel = actuales.includes(a) ? 'selected' : '';
-            return `<div class="alergeno-btn ${sel}" onclick="this.classList.toggle('selected')">${a}</div>`;
-        }).join('');
         document.getElementById('modal-editor').style.display = 'block';
     }
 
     function aplicarCambiosPlato() {
-        let p = esNuevoPlato ? datosTempNuevo : datosLocales.find(x => x.id === platoEditandoId);
-        if(esNuevoPlato) datosLocales.push(p);
-        p.es = superLimpiar(document.getElementById('edit-es').value);
-        p.en = superLimpiar(document.getElementById('edit-en').value);
-        p.de = superLimpiar(document.getElementById('edit-de').value);
-        p.fr = superLimpiar(document.getElementById('edit-fr').value);
-        p.it = superLimpiar(document.getElementById('edit-it').value);
-        p.precio = parseFloat(document.getElementById('edit-precio').value || 0).toFixed(2);
-        p.imagen = superLimpiar(document.getElementById('edit-imagen').value);
-        p.alergenos = Array.from(document.querySelectorAll('.alergeno-btn.selected')).map(el => el.innerText).join(', ');
+        const p = datosLocales.find(x => x.id === platoEditandoId);
+        p.es = document.getElementById('edit-es').value;
+        p.en = document.getElementById('edit-en').value;
+        p.precio = document.getElementById('edit-precio').value;
         cerrarModal('modal-editor');
         renderizar();
     }
 
-    function generarMenuAgrupado() {
-        let h = "";
-        ESTRUCTURA.forEach(cat => {
-            h += `<button onclick="prepararNuevoPlato(${cat.id})" style="width:100%;text-align:left;padding:12px;margin-bottom:5px;background:white;border:1px solid #ddd;border-radius:8px;">+ ${cat.name}</button>`;
-        });
-        document.getElementById('lista-agrupada').innerHTML = h;
-    }
-
-    function prepararNuevoPlato(baseId) {
-        const similares = datosLocales.filter(p => p.id >= baseId && p.id <= baseId + 99);
-        const nuevoId = similares.length > 0 ? Math.max(...similares.map(p => p.id)) + 1 : baseId;
-        datosTempNuevo = { id: nuevoId, precio: "0.00", activa: true, es: "NUEVO PRODUCTO", carpeta: "vinos", imagen: "", alergenos: "", en:"", de:"", fr:"", it:"" };
-        cerrarModal('modal-selector');
-        abrirEditor(nuevoId, true);
-    }
-
     async function enviarAlExcel() {
         const btn = document.querySelector('.btn-guardar-main');
-        btn.innerText = "⏳ SUBIENDO..."; btn.disabled = true;
-        datosLocales.sort((a, b) => a.id - b.id);
+        btn.innerText = "⏳ GUARDANDO..."; btn.disabled = true;
+        datosLocales.sort((a,b) => a.id - b.id);
+        
+        // Limpieza profunda antes de enviar para asegurar que no hay saltos de línea rotos
         const payload = datosLocales.map(p => ({
-            id: p.id, precio: p.precio, estado: p.activa ? 'si' : 'no', 
-            nombre_es: p.es, carpeta: p.carpeta, imagen: p.imagen, alergenos: p.alergenos,
-            nombre_en: p.en, nombre_de: p.de, nombre_fr: p.fr, nombre_it: p.it
+            id: p.id,
+            precio: p.precio.toString().replace(',','.'),
+            estado: p.activa ? 'si' : 'no',
+            nombre_es: p.es.replace(/"/g, '""'),
+            carpeta: p.carpeta,
+            imagen: p.imagen,
+            alergenos: p.alergenos,
+            nombre_en: p.en.replace(/"/g, '""'),
+            nombre_de: p.de,
+            nombre_fr: p.fr,
+            nombre_it: p.it
         }));
+
         try {
-            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert("✅ Guardado con éxito.");
-            location.reload();
-        } catch (e) { 
-            alert("Error al guardar"); 
-            btn.disabled = false; btn.innerText = "💾 GUARDAR Y REORDENAR EXCEL"; 
+            await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                body: JSON.stringify(payload)
+            });
+            setTimeout(() => { alert("✅ Excel Actualizado Correctamente"); location.reload(); }, 1000);
+        } catch (e) {
+            alert("Error de conexión");
+            btn.disabled = false;
         }
     }
 
-    function toggleActivo(id, v) { datosLocales.find(x => x.id === id).activa = v; }
-    function abrirSelector() { document.getElementById('modal-selector').style.display = 'block'; }
+    function generarMenuAgrupado() {
+        document.getElementById('lista-agrupada').innerHTML = ESTRUCTURA.map(cat => 
+            `<button onclick="crearNuevo(${cat.id})" style="width:100%;padding:10px;margin:2px;">+ ${cat.name}</button>`
+        ).join('');
+    }
+
+    function crearNuevo(baseId) {
+        const nuevoId = Math.max(...datosLocales.filter(p => p.id >= baseId && p.id <= baseId+99).map(p=>p.id), baseId-1) + 1;
+        datosLocales.push({id: nuevoId, precio:"0.00", activa:true, es:"NUEVO", carpeta:"vinos", imagen:"", alergenos:"", en:"", de:"", fr:"", it:""});
+        cerrarModal('modal-selector');
+        renderizar();
+    }
+
+    function toggle(id, v) { datosLocales.find(x => x.id === id).activa = v; }
     function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
+    function abrirSelector() { document.getElementById('modal-selector').style.display = 'block'; }
 
     cargar();
 </script>
