@@ -148,7 +148,12 @@
         { id: 8000, name: "8- Postres", folder: "postres" },
         { id: 9000, name: "9- Cafés", sub: [{id: 9000, name: "Cafés", folder: "cafe"},{id: 9100, name: "Infusiones", folder: "cafe"}]},
         { id: 10000, name: "10- Bebidas", sub: [{id: 10000, name: "Refrescos", folder: "refrescos"},{id: 10100, name: "Zumos", folder: "refrescos"},{id: 10200, name: "Otros", folder: "refrescos"}]},
-        { id: 11000, name: "11- Cervezas", folder: "cerveza" }
+        { id: 11000, name: "11- Cervezas", folder: "cerveza" },
+        // --- MODIFICACIÓN: VINOS ---
+        { id: 13100, name: "13.1 Vinos Blancos", sub: [{id: 13100, name: "Vinos de Mallorca", folder: "vinos"}, {id: 13130, name: "Galicia", folder: "vinos"}, {id: 13140, name: "Rueda", folder: "vinos"}, {id: 13150, name: "Otras D.O.", folder: "vinos"}, {id: 13190, name: "Copas", folder: "vinos"}]},
+        { id: 13200, name: "13.2 Vinos Rosados", sub: [{id: 13200, name: "Vinos de Mallorca", folder: "vinos"}, {id: 13250, name: "Copas", folder: "vinos"}]},
+        { id: 13300, name: "13.3 Vinos Tintos", sub: [{id: 13300, name: "Vinos de Mallorca", folder: "vinos"}, {id: 13330, name: "Rioja", folder: "vinos"}, {id: 13350, name: "Ribera", folder: "vinos"}, {id: 13370, name: "Otras D.O.", folder: "vinos"}, {id: 13390, name: "Copas", folder: "vinos"}]},
+        { id: 13400, name: "13.4 Cavas & Champagne", sub: [{id: 13400, name: "Vinos de Mallorca", folder: "vinos"}, {id: 13450, name: "Copas", folder: "vinos"}]}
     ];
 
     function superLimpiar(texto) {
@@ -301,7 +306,7 @@
             location.reload();
         } catch (e) { 
             alert("Error al guardar"); 
-            btn.disabled = false; btn.innerText = "💾 GUARDAR"; 
+            btn.disabled = false; btn.innerText = "💾 GUARDAR Y REORDENAR EXCEL"; 
         }
     }
 
