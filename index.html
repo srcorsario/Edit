@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ADMIN CARTA V 11.9.2 - FIX CSV</title>
+    <title>ADMIN CARTA V 11.9.3 - MULTILINE FIX</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primario: #e67e22; --fondo: #f4f7f6; --texto: #2c3e50; --verde: #27ae60; --rojo: #e74c3c; }
+        :root { --primario: #e67e22; --fondo: #f4f7f6; --texto: #2c3e50; --verde: #27ae60; }
         body { font-family: 'Montserrat', sans-serif; background: var(--fondo); margin: 0; padding: 10px 5px 140px; color: var(--texto); }
         .container { width: 100%; max-width: 1200px; margin: 0 auto; }
         .header-admin { text-align: center; background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-bottom: 4px solid var(--primario); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -16,50 +16,43 @@
         .categoria-titulo { background: var(--primario); color: white; padding: 10px 15px; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
         .plato-item { display: flex; padding: 12px; border-bottom: 1px solid #f1f2f6; gap: 10px; align-items: center; }
         .plato-info { flex: 1; min-width: 0; }
-        .plato-nombre { font-weight: 600; font-size: 0.9rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .info-pc-extra { font-size: 0.7rem; color: #7f8c8d; margin-top: 4px; display: flex; gap: 10px; align-items: center; }
-        .tag-carpeta { background: #ebf2f7; padding: 2px 6px; border-radius: 4px; color: #2980b9; font-weight: bold; }
-        .plato-meta-footer { display: flex; align-items: center; gap: 15px; flex-shrink: 0; min-width: 180px; justify-content: flex-end; }
+        .plato-nombre { font-weight: 600; font-size: 0.9rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: pre-wrap; line-height: 1.3; }
+        .plato-meta-footer { display: flex; align-items: center; gap: 15px; flex-shrink: 0; min-width: 150px; justify-content: flex-end; }
         .btn-config { background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; padding: 8px; cursor: pointer; }
         .btn-orden { background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 5px 8px; cursor: pointer; font-size: 1rem; }
-        .btn-add-float { position: fixed; bottom: 85px; right: 20px; width: 60px; height: 60px; background: var(--primario); color: white; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; cursor: pointer; }
-        .btn-guardar-main { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 18px; border-radius: 50px; border: none; font-weight: 700; width: 90%; max-width: 450px; z-index: 1000; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); overflow-y: auto; }
-        .modal-content { background: white; width: 96%; max-width: 1000px; margin: 15px auto; border-radius: 15px; padding: 25px; box-sizing: border-box; }
-        .input-estandar { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Montserrat'; font-size: 1rem; box-sizing: border-box; }
+        .btn-add-float { position: fixed; bottom: 85px; right: 20px; width: 60px; height: 60px; background: var(--primario); color: white; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; }
+        .btn-guardar-main { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 18px; border-radius: 50px; border: none; font-weight: 700; width: 90%; max-width: 450px; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); overflow-y: auto; }
+        .modal-content { background: white; width: 96%; max-width: 800px; margin: 15px auto; border-radius: 15px; padding: 20px; box-sizing: border-box; }
+        .input-estandar { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Montserrat'; font-size: 1rem; box-sizing: border-box; margin-bottom: 10px; }
+        textarea.input-estandar { min-height: 100px; resize: vertical; }
         .switch { position: relative; width: 44px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; transition: .4s; border-radius: 34px; }
         .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background: var(--verde); }
         input:checked + .slider:before { transform: translateX(22px); }
-
-        @media (max-width: 600px) {
-            .plato-item { display: grid; grid-template-columns: 40px 1fr; gap: 4px 12px; }
-            .plato-info { grid-column: 2; }
-            .plato-meta-footer { grid-column: 2; justify-content: space-between; min-width: 0; }
-            .info-pc-extra { display: none; }
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header-admin">
-        <h1>⚙️ GESTOR DE CARTA V 11.9.2</h1>
+        <h1>⚙️ GESTOR DE CARTA V 11.9.3</h1>
         <div id="status-carga">Cargando datos...</div>
     </div>
     <div id="editor-dinamico"></div>
 </div>
 
 <button class="btn-add-float" onclick="abrirSelector()">+</button>
-<button class="btn-guardar-main" onclick="enviarAlExcel()">💾 GUARDAR CAMBIOS EN EXCEL</button>
+<button class="btn-guardar-main" onclick="enviarAlExcel()">💾 GUARDAR CAMBIOS</button>
 
 <div id="modal-editor" class="modal">
     <div class="modal-content">
-        <h2 id="modal-titulo" style="color:var(--primario)">Editar Plato</h2>
-        <input type="text" id="edit-es" class="input-estandar" placeholder="Nombre ES" style="margin-bottom:10px;">
-        <input type="text" id="edit-en" class="input-estandar" placeholder="Nombre EN" style="margin-bottom:10px;">
+        <h2 id="modal-titulo" style="color:var(--primario)">Editar Producto</h2>
+        <label><small>Nombre y Descripción (Uvas)</small></label>
+        <textarea id="edit-es" class="input-estandar" placeholder="Nombre ES + Uvas"></textarea>
+        <textarea id="edit-en" class="input-estandar" placeholder="Nombre EN + Grapes"></textarea>
         <input type="number" id="edit-precio" class="input-estandar" step="0.01" placeholder="Precio">
         <div style="margin-top: 20px; display: flex; gap: 10px;">
             <button onclick="aplicarCambiosPlato()" style="flex:2; background:var(--verde); color:white; padding:15px; border:none; border-radius:10px; font-weight:bold;">ACEPTAR</button>
@@ -82,7 +75,6 @@
 
     let datosLocales = [];
     let platoEditandoId = null;
-    let esNuevoPlato = false;
 
     const ESTRUCTURA = [
         { id: 12000, name: "Sugerencias", range: 999 },
@@ -100,23 +92,29 @@
         { id: 13400, name: "13.4 Cavas & Champagne", range: 99 }
     ];
 
-    // PARSER ROBUSTO PARA CSV (Evita errores con comas dentro de paréntesis)
+    // PARSER AVANZADO: Detecta saltos de línea dentro de comillas
     function parseCSV(text) {
-        const lines = text.split(/\r?\n/);
-        return lines.map(line => {
-            const result = [];
-            let cell = '';
-            let inQuotes = false;
-            for (let i = 0; i < line.length; i++) {
-                let char = line[i];
-                if (char === '"' && line[i+1] === '"') { cell += '"'; i++; }
-                else if (char === '"') { inQuotes = !inQuotes; }
-                else if (char === ',' && !inQuotes) { result.push(cell); cell = ''; }
-                else { cell += char; }
-            }
-            result.push(cell);
-            return result;
-        });
+        const rows = [];
+        let row = [];
+        let field = '';
+        let inQuotes = false;
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const nextChar = text[i+1];
+            if (char === '"' && inQuotes && nextChar === '"') { field += '"'; i++; }
+            else if (char === '"') { inQuotes = !inQuotes; }
+            else if (char === ',' && !inQuotes) { row.push(field); field = ''; }
+            else if ((char === '\r' || char === '\n') && !inQuotes) {
+                if (field || row.length > 0) {
+                    row.push(field);
+                    rows.push(row);
+                }
+                field = ''; row = [];
+                if (char === '\r' && nextChar === '\n') i++;
+            } else { field += char; }
+        }
+        if (field || row.length > 0) { row.push(field); rows.push(row); }
+        return rows;
     }
 
     async function cargar() {
@@ -139,7 +137,7 @@
                     });
                 }
             });
-            document.getElementById('status-carga').innerText = "✅ Datos Sincronizados";
+            document.getElementById('status-carga').innerText = "✅ Sincronizado";
             renderizar();
             generarMenuAgrupado();
         } catch (e) { document.getElementById('status-carga').innerText = "❌ Error Carga"; }
@@ -160,10 +158,9 @@
                     </div>
                     <div class="plato-info">
                         <span class="plato-nombre">${p.es}</span>
-                        <div class="info-pc-extra"><span class="tag-carpeta">${p.carpeta}</span></div>
                     </div>
                     <div class="plato-meta-footer">
-                        <small>${p.precio}€</small>
+                        <small><b>${p.precio}€</b></small>
                         <button class="btn-config" onclick="abrirEditor(${p.id})">⚙️</button>
                         <label class="switch"><input type="checkbox" ${p.activa?'checked':''} onchange="toggle(${p.id},this.checked)"><span class="slider"></span></label>
                     </div>
@@ -208,19 +205,18 @@
 
     async function enviarAlExcel() {
         const btn = document.querySelector('.btn-guardar-main');
-        btn.innerText = "⏳ GUARDANDO..."; btn.disabled = true;
+        btn.innerText = "⏳ PROCESANDO..."; btn.disabled = true;
         datosLocales.sort((a,b) => a.id - b.id);
         
-        // Limpieza profunda antes de enviar para asegurar que no hay saltos de línea rotos
         const payload = datosLocales.map(p => ({
             id: p.id,
-            precio: p.precio.toString().replace(',','.'),
+            precio: p.precio.toString(),
             estado: p.activa ? 'si' : 'no',
-            nombre_es: p.es.replace(/"/g, '""'),
+            nombre_es: p.es, // El script de Google manejará las comillas
             carpeta: p.carpeta,
             imagen: p.imagen,
             alergenos: p.alergenos,
-            nombre_en: p.en.replace(/"/g, '""'),
+            nombre_en: p.en,
             nombre_de: p.de,
             nombre_fr: p.fr,
             nombre_it: p.it
@@ -230,12 +226,12 @@
             await fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                cache: 'no-cache',
                 body: JSON.stringify(payload)
             });
-            setTimeout(() => { alert("✅ Excel Actualizado Correctamente"); location.reload(); }, 1000);
+            alert("✅ Guardado Correctamente");
+            location.reload();
         } catch (e) {
-            alert("Error de conexión");
+            alert("Error al enviar");
             btn.disabled = false;
         }
     }
@@ -248,7 +244,7 @@
 
     function crearNuevo(baseId) {
         const nuevoId = Math.max(...datosLocales.filter(p => p.id >= baseId && p.id <= baseId+99).map(p=>p.id), baseId-1) + 1;
-        datosLocales.push({id: nuevoId, precio:"0.00", activa:true, es:"NUEVO", carpeta:"vinos", imagen:"", alergenos:"", en:"", de:"", fr:"", it:""});
+        datosLocales.push({id: nuevoId, precio:"0.00", activa:true, es:"NUEVO\nUvas:", carpeta:"vinos", imagen:"", alergenos:"", en:"NEW\nGrapes:", de:"", fr:"", it:""});
         cerrarModal('modal-selector');
         renderizar();
     }
