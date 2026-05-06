@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ADMIN CARTA V 11.9 - MOBILE PHOTO ICON</title>
+    <title>ADMIN CARTA V 12.0 - WINE SYNC</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primario: #e67e22; --fondo: #f4f7f6; --texto: #2c3e50; --verde: #27ae60; --rojo: #e74c3c; }
@@ -15,7 +15,6 @@
         .categoria-tarjeta { background: white; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .categoria-titulo { background: var(--primario); color: white; padding: 10px 15px; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
         
-        /* Estilos Base Plato */
         .plato-item { display: flex; padding: 12px; border-bottom: 1px solid #f1f2f6; gap: 10px; align-items: center; }
         .plato-info { flex: 1; min-width: 0; }
         .plato-nombre { font-weight: 600; font-size: 0.9rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -26,7 +25,6 @@
 
         .plato-meta-footer { display: flex; align-items: center; gap: 15px; flex-shrink: 0; min-width: 180px; justify-content: flex-end; }
         .meta-left { display: flex; align-items: center; gap: 5px; }
-        .meta-center { display: none; } 
         .meta-right { display: flex; align-items: center; gap: 15px; }
         .plato-orden-btns { display: flex; flex-direction: column; gap: 4px; width: 35px; }
 
@@ -37,12 +35,9 @@
             .btn-orden { padding: 6px 0; font-size: 0.85rem; width: 100%; }
             .plato-info { grid-column: 2; grid-row: 1; }
             .plato-nombre { font-size: 0.95rem; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0; padding-right: 10px; white-space: normal; }
-            
             .plato-meta-footer { grid-column: 2; grid-row: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 5px; min-width: 0; }
             .meta-left { display: flex; align-items: center; gap: 5px; flex: 0 1 auto; white-space: nowrap; }
-            .meta-center { display: flex; align-items: center; justify-content: center; flex: 0 0 auto; font-size: 1rem; } 
             .meta-right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; justify-content: flex-end; }
-            .btn-config { padding: 4px 6px; font-size: 0.85rem; }
         }
 
         .btn-config { background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; padding: 8px; cursor: pointer; }
@@ -56,13 +51,12 @@
         .input-row-lang { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
         .lang-tag { background: #34495e; color: white; font-weight: 700; font-size: 0.7rem; width: 40px; padding: 12px 0; text-align: center; border-radius: 8px; flex-shrink: 0; }
         .input-estandar { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Montserrat'; font-size: 1rem; width: 100%; box-sizing: border-box; }
-        textarea.input-estandar { min-height: 60px; resize: vertical; line-height: 1.4; }
+        .input-uvas { background: #fff9f4; border: 1px dashed var(--primario); margin-top: 5px; font-size: 0.85rem; }
         .meta-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 700px) { .meta-grid { grid-template-columns: 1fr 2fr; } }
         .alergenos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
         .alergeno-btn { border: 1px solid #ddd; border-radius: 6px; padding: 10px; font-size: 0.7rem; text-align: center; cursor: pointer; background: #fff; font-weight: 600; }
         .alergeno-btn.selected { background: var(--primario); color: white; border-color: var(--primario); }
-        .alergeno-btn.selected.es-dieta { background: var(--verde) !important; border-color: var(--verde) !important; }
         .switch { position: relative; width: 44px; height: 22px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; transition: .4s; border-radius: 34px; }
@@ -75,7 +69,7 @@
 
 <div class="container">
     <div class="header-admin">
-        <h1>⚙️ GESTOR DE CARTA V 11.9</h1>
+        <h1>⚙️ GESTOR DE CARTA V 12.0</h1>
         <div id="status-carga">Cargando datos...</div>
     </div>
     <div id="editor-dinamico"></div>
@@ -86,19 +80,49 @@
 
 <div id="modal-editor" class="modal">
     <div class="modal-content">
-        <h2 id="modal-titulo" style="margin-top:0; color:var(--primario); border-bottom: 2px solid #eee; padding-bottom: 10px;">Editar Plato</h2>
+        <h2 id="modal-titulo" style="margin-top:0; color:var(--primario); border-bottom: 2px solid #eee; padding-bottom: 10px;">Editar Elemento</h2>
         <div class="input-group">
-            <label>Nombres</label>
-            <div class="input-row-lang"><div class="lang-tag">ES</div><textarea id="edit-es" class="input-estandar"></textarea></div>
-            <div class="input-row-lang"><div class="lang-tag">EN</div><textarea id="edit-en" class="input-estandar"></textarea></div>
-            <div class="input-row-lang"><div class="lang-tag">DE</div><textarea id="edit-de" class="input-estandar"></textarea></div>
-            <div class="input-row-lang"><div class="lang-tag">FR</div><textarea id="edit-fr" class="input-estandar"></textarea></div>
-            <div class="input-row-lang"><div class="lang-tag">IT</div><textarea id="edit-it" class="input-estandar"></textarea></div>
+            <label>Nombres y Uvas (Uvas solo para Vinos)</label>
+            <div class="input-row-lang">
+                <div class="lang-tag">ES</div>
+                <div style="flex:1">
+                    <input id="edit-es" class="input-estandar" placeholder="Nombre">
+                    <input id="edit-es-uvas" class="input-estandar input-uvas" placeholder="Uvas / Detalles (Opcional)">
+                </div>
+            </div>
+            <div class="input-row-lang">
+                <div class="lang-tag">EN</div>
+                <div style="flex:1">
+                    <input id="edit-en" class="input-estandar" placeholder="Name">
+                    <input id="edit-en-uvas" class="input-estandar input-uvas" placeholder="Grapes / Details (Optional)">
+                </div>
+            </div>
+            <div class="input-row-lang">
+                <div class="lang-tag">DE</div>
+                <div style="flex:1">
+                    <input id="edit-de" class="input-estandar" placeholder="Name">
+                    <input id="edit-de-uvas" class="input-estandar input-uvas" placeholder="Rebsorten (Optional)">
+                </div>
+            </div>
+            <div class="input-row-lang">
+                <div class="lang-tag">FR</div>
+                <div style="flex:1">
+                    <input id="edit-fr" class="input-estandar" placeholder="Nom">
+                    <input id="edit-fr-uvas" class="input-estandar input-uvas" placeholder="Cépages (Optionnel)">
+                </div>
+            </div>
+            <div class="input-row-lang">
+                <div class="lang-tag">IT</div>
+                <div style="flex:1">
+                    <input id="edit-it" class="input-estandar" placeholder="Nome">
+                    <input id="edit-it-uvas" class="input-estandar input-uvas" placeholder="Vitigni (Opzionale)">
+                </div>
+            </div>
         </div>
         <div class="meta-grid">
             <div class="input-group">
                 <label>Precio (€)</label>
-                <input type="number" id="edit-precio" class="input-estandar" step="0.01" oninput="if(this.value.includes('.')){ if(this.value.split('.')[1].length > 2) this.value = this.value.slice(0, -1); }">
+                <input type="number" id="edit-precio" class="input-estandar" step="0.01">
             </div>
             <div class="input-group">
                 <label>Imagen</label>
@@ -118,14 +142,13 @@
 
 <div id="modal-selector" class="modal">
     <div class="modal-content" style="max-width: 500px;">
-        <h3 style="text-align:center; color:var(--primario);">AÑADIR NUEVO PLATO A...</h3>
+        <h3 style="text-align:center; color:var(--primario);">AÑADIR NUEVO A...</h3>
         <div id="lista-agrupada" style="max-height: 65vh; overflow-y: auto;"></div>
         <button onclick="cerrarModal('modal-selector')" style="width:100%; margin-top:15px; padding:15px; border:none; background:#eee; border-radius:10px; font-weight:bold;">CERRAR</button>
     </div>
 </div>
 
 <script>
-    // --- CONFIGURACIÓN ACTUALIZADA CON TUS NUEVOS DATOS ---
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9rPlxpax2lE0rN97c6Hoy_OxUwREqRb48juEBr9C91ZFY2UvaKgC8JdiRcwDrtBErXFVmFRh0Zr5e/pub?gid=0&single=true&output=csv';
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz2wu6B0m-QWZLqDRXhWcONg0Lta3uhTDOXq1lly43p5XKC7uvReeT6HcfC8K0LTLusTA/exec';
 
@@ -148,7 +171,12 @@
         { id: 8000, name: "8- Postres", folder: "postres" },
         { id: 9000, name: "9- Cafés", sub: [{id: 9000, name: "Cafés", folder: "cafe"},{id: 9100, name: "Infusiones", folder: "cafe"}]},
         { id: 10000, name: "10- Bebidas", sub: [{id: 10000, name: "Refrescos", folder: "refrescos"},{id: 10100, name: "Zumos", folder: "refrescos"},{id: 10200, name: "Otros", folder: "refrescos"}]},
-        { id: 11000, name: "11- Cervezas", folder: "cerveza" }
+        { id: 11000, name: "11- Cervezas", folder: "cerveza" },
+        // --- SECCIÓN VINOS ---
+        { id: 13100, name: "13.1- Vinos Blancos", sub: [{id: 13100, name: "Mallorca", folder: "vinos"},{id: 13130, name: "Galicia", folder: "vinos"},{id: 13140, name: "Rueda", folder: "vinos"},{id: 13150, name: "Otras D.O.", folder: "vinos"},{id: 13190, name: "Copas", folder: "vinos"}]},
+        { id: 13200, name: "13.2- Vinos Rosados", sub: [{id: 13200, name: "Mallorca", folder: "vinos"},{id: 13250, name: "Copas", folder: "vinos"}]},
+        { id: 13300, name: "13.3- Vinos Tintos", sub: [{id: 13300, name: "Mallorca", folder: "vinos"},{id: 13330, name: "Rioja", folder: "vinos"},{id: 13340, name: "Ribera", folder: "vinos"},{id: 13370, name: "Otras D.O.", folder: "vinos"},{id: 13390, name: "Copas", folder: "vinos"}]},
+        { id: 13400, name: "13.4- Cavas & Champagne", sub: [{id: 13400, name: "Botellas", folder: "vinos"},{id: 13450, name: "Copas", folder: "vinos"}]}
     ];
 
     function superLimpiar(texto) {
@@ -157,6 +185,16 @@
         if (t.startsWith('"') && t.endsWith('"')) t = t.substring(1, t.length - 1);
         t = t.replace(/""/g, '"');
         return t.trim();
+    }
+
+    // Procesa el texto que viene del CSV (Nombre // Uvas)
+    function desglosarNombre(texto) {
+        if (!texto) return { nombre: "", uvas: "" };
+        const partes = texto.split('//');
+        return {
+            nombre: partes[0] ? partes[0].trim() : "",
+            uvas: partes[1] ? partes[1].trim() : ""
+        };
     }
 
     async function cargar() {
@@ -196,13 +234,14 @@
             platos.forEach((p) => {
                 let htmlImagenPC = p.imagen ? `<span class="tag-imagen">📷 ${p.imagen}</span>` : "";
                 let htmlCarpetaPC = p.carpeta ? `<span class="tag-carpeta">${p.carpeta}</span>` : "";
+                const nombreLimpio = desglosarNombre(p.es).nombre;
                 h += `<div class="plato-item">
                     <div class="plato-orden-btns">
                         <button class="btn-orden" onclick="moverPlato(${p.id}, 'subir')">▲</button>
                         <button class="btn-orden" onclick="moverPlato(${p.id}, 'bajar')">▼</button>
                     </div>
                     <div class="plato-info">
-                        <span class="plato-nombre">${p.es}</span>
+                        <span class="plato-nombre">${nombreLimpio}</span>
                         <div class="info-pc-extra">${htmlCarpetaPC} ${htmlImagenPC}</div>
                     </div>
                     <div class="plato-meta-footer">
@@ -237,11 +276,15 @@
         let p = esNuevo ? datosTempNuevo : datosLocales.find(x => x.id === id);
         esNuevoPlato = esNuevo;
         platoEditandoId = id;
-        document.getElementById('edit-es').value = p.es;
-        document.getElementById('edit-en').value = p.en;
-        document.getElementById('edit-de').value = p.de;
-        document.getElementById('edit-fr').value = p.fr;
-        document.getElementById('edit-it').value = p.it;
+
+        // Desglosamos cada idioma para rellenar nombre y uvas por separado
+        const langs = ['es', 'en', 'de', 'fr', 'it'];
+        langs.forEach(l => {
+            const data = desglosarNombre(p[l]);
+            document.getElementById(`edit-${l}`).value = data.nombre;
+            document.getElementById(`edit-${l}-uvas`).value = data.uvas;
+        });
+
         document.getElementById('edit-precio').value = p.precio;
         document.getElementById('edit-imagen').value = p.imagen;
         const actuales = p.alergenos.split(',').map(s => s.trim().toUpperCase());
@@ -255,11 +298,15 @@
     function aplicarCambiosPlato() {
         let p = esNuevoPlato ? datosTempNuevo : datosLocales.find(x => x.id === platoEditandoId);
         if(esNuevoPlato) datosLocales.push(p);
-        p.es = superLimpiar(document.getElementById('edit-es').value);
-        p.en = superLimpiar(document.getElementById('edit-en').value);
-        p.de = superLimpiar(document.getElementById('edit-de').value);
-        p.fr = superLimpiar(document.getElementById('edit-fr').value);
-        p.it = superLimpiar(document.getElementById('edit-it').value);
+
+        // Unimos Nombre // Uvas para cada idioma al guardar
+        const langs = ['es', 'en', 'de', 'fr', 'it'];
+        langs.forEach(l => {
+            const nom = superLimpiar(document.getElementById(`edit-${l}`).value);
+            const uvas = superLimpiar(document.getElementById(`edit-${l}-uvas`).value);
+            p[l] = uvas ? `${nom} // ${uvas}` : nom;
+        });
+
         p.precio = parseFloat(document.getElementById('edit-precio').value || 0).toFixed(2);
         p.imagen = superLimpiar(document.getElementById('edit-imagen').value);
         p.alergenos = Array.from(document.querySelectorAll('.alergeno-btn.selected')).map(el => el.innerText).join(', ');
@@ -271,17 +318,17 @@
         let h = "";
         ESTRUCTURA.forEach(cat => {
             h += `<div style="margin-bottom:10px;"><div style="background:#eee;padding:5px;font-size:0.7rem;">${cat.name}</div>`;
-            if (cat.sub) cat.sub.forEach(s => h += `<button onclick="prepararNuevoPlato(${s.id})" style="width:100%;text-align:left;padding:10px;background:white;border:1px solid #ddd;">+ ${s.name}</button>`);
-            else h += `<button onclick="prepararNuevoPlato(${cat.id})" style="width:100%;text-align:left;padding:10px;background:white;border:1px solid #ddd;">+ ${cat.name}</button>`;
+            if (cat.sub) cat.sub.forEach(s => h += `<button onclick="prepararNuevoPlato(${s.id}, '${s.folder}')" style="width:100%;text-align:left;padding:10px;background:white;border:1px solid #ddd;">+ ${s.name}</button>`);
+            else h += `<button onclick="prepararNuevoPlato(${cat.id}, '${cat.folder||''}')" style="width:100%;text-align:left;padding:10px;background:white;border:1px solid #ddd;">+ ${cat.name}</button>`;
             h += `</div>`;
         });
         document.getElementById('lista-agrupada').innerHTML = h;
     }
 
-    function prepararNuevoPlato(baseId) {
+    function prepararNuevoPlato(baseId, folder) {
         const similares = datosLocales.filter(p => p.id >= baseId && p.id <= baseId + 99);
         const nuevoId = similares.length > 0 ? Math.max(...similares.map(p => p.id)) + 1 : baseId;
-        datosTempNuevo = { id: nuevoId, precio: "0.00", activa: true, es: "NUEVO PLATO", carpeta: "", imagen: "", alergenos: "", en:"", de:"", fr:"", it:"" };
+        datosTempNuevo = { id: nuevoId, precio: "0.00", activa: true, es: "NUEVO", carpeta: folder, imagen: "", alergenos: "", en:"", de:"", fr:"", it:"" };
         cerrarModal('modal-selector');
         abrirEditor(nuevoId, true);
     }
